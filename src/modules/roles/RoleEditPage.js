@@ -1,4 +1,4 @@
-import { Input, Button, Link, Badge } from '@/components/ui';
+import { Input, Button, Link, Badge, Textarea } from '@/components/ui';
 
 /**
  * @file RoleEditPage.js
@@ -28,7 +28,7 @@ export const RoleEditPage = async () => {
                     </div>
 
                     <div class="col-span-1 md:col-span-2">
-                        ${Input({
+                        ${Textarea({
                             label: 'Descripción del Rol',
                             id: 'description',
                             name: 'description',
