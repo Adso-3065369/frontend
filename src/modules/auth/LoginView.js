@@ -1,4 +1,4 @@
-import { Button, Input, Link } from '@/components/ui';
+import { Button, Input, Link, Label } from '@/components/ui';
 
 /**
  * @file LoginView.js
@@ -19,6 +19,10 @@ export const LoginView = async () => {
 
                 <form id="form-login" class="space-y-6">
                     <div class="space-y-4">
+                        ${Label({
+                            text: 'Correo electrónico',
+                            htmlFor: 'email'
+                        })}
                         ${Input({
                             label: 'Correo electrónico',
                             type: 'email',
@@ -27,7 +31,10 @@ export const LoginView = async () => {
                             placeholder: 'admin@sistema.com',
                             className: 'border-gray-700 focus:border-brand text-white'
                         })}
-                        
+                        ${Label({
+                            text: 'Contraseña',
+                            htmlFor: 'password'
+                        })}
                         ${Input({
                             label: 'Contraseña',
                             type: 'password',

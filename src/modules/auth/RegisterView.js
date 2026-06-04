@@ -1,4 +1,4 @@
-import { Button, Input, Link } from '@/components/ui';
+import { Button, Input, Link, Label } from '@/components/ui';
 
 /**
  * @file RegisterView.js
@@ -18,34 +18,48 @@ export const RegisterView = async () => {
                 </div>
 
                 <form id="form-register" class="space-y-5">
-                    
+                    ${Label({
+                        text: 'Nombre Completo',
+                        htmlFor: 'fullName'
+                    })}
                     ${Input({
-                        label: 'Nombre Completo',
                         type: 'text',
                         id: 'fullName',
-                        name: 'fullName'
+                        name: 'fullName',
+                        placeholder: 'Juan Pérez'
                     })}
 
+                    ${Label({
+                        text: 'Correo Electrónico',
+                        htmlFor: 'email'
+                    })}
                     ${Input({
-                        label: 'Correo Electrónico',
                         type: 'email',
                         id: 'email',
-                        name: 'email'
+                        name: 'email',
+                        placeholder: 'juan@ejemplo.com'
                     })}
 
+                    ${Label({
+                        text: 'Contraseña',
+                        htmlFor: 'password'
+                    })}
                     ${Input({
-                        label: 'Contraseña',
                         type: 'password',
                         id: 'password',
                         name: 'password',
-                        className: 'mb-1' 
+                        placeholder: '••••••••'
                     })}
 
+                    ${Label({
+                        text: 'Confirmar Contraseña',
+                        htmlFor: 'passwordConfirm'
+                    })}
                     ${Input({
-                        label: 'Confirmar Contraseña',
                         type: 'password',
                         id: 'passwordConfirm',
-                        name: 'passwordConfirm'
+                        name: 'passwordConfirm',
+                        placeholder: '••••••••'
                     })}
 
                     ${Button({

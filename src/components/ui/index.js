@@ -11,3 +11,5 @@ export * from './ChartCard.js';
 export * from './DataTable.js';
 export * from './Modal.js';
 export * from './Pagination.js';
+export * from './Textarea.js';
+export * from './Label.js';
