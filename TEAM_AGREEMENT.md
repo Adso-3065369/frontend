@@ -33,5 +33,6 @@ Para avanzar en el proyecto, cada aprendiz debe cumplir este proceso secuencial:
 | **Líder de Proyecto** | __________________ | `@` | [ ] |
 | **Desarrollador** | __________________ | `@` | [ ] |
 | **Desarrollador** | __________________ | `@` | [ ] |
+| **Desarrollador**  Leidy Esmeralda Duarte Prada | @Leidyesme
 
 > *"El éxito de este PROYECTO DE DESARROLLO no depende de quién escriba más código, sino de quién demuestre mejor comprensión y rigor técnico en su análisis."*
