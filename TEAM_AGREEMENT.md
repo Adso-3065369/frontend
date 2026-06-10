@@ -31,7 +31,11 @@ Para avanzar en el proyecto, cada aprendiz debe cumplir este proceso secuencial:
 | Rol | Nombre | Usuario GitHub | Firma |
 | :--- | :--- | :--- | :--- |
 | **Líder de Proyecto** | __________________ | `@` | [ ] |
+| **Desarrollador** | Adriana Lucia Lizcano Almeida| `@` | [Lucia-1234 ] |
 | **Desarrollador** | __________________ | `@` | [ ] |
+| **Desarrollador** | __________________ | `@` | [ ] |
+| **Desarrollador** | __________________ | `@` | [ ] |
+| **Desarrollador** | Alvaro Andres Salazar Herrera | `@AlvaroSaGit` | [Alvaro Andres Salazar Herrera] |
 | **Desarrollador** | Dylan Vesga | `@sfbtm` | [Dylan] |
 | **Desarrollador** | Michael Benavides | `@michaelfb803@gmail.com` | [michaelbenavides3] |
 
