@@ -31,6 +31,9 @@ Para avanzar en el proyecto, cada aprendiz debe cumplir este proceso secuencial:
 | Rol | Nombre | Usuario GitHub | Firma |
 | :--- | :--- | :--- | :--- |
 | **Líder de Proyecto** | __________________ | `@` | [ ] |
+| **Desarrollador** | Jhonatan David Leherici Carrascal | `@Oatan150520` | [Jhonatan Leherici] |
+| **Desarrollador** | __________________ | `@` | [ ] |
+
   **Líder de Proyecto** | Sergio Andrés Álvarez | `@andre1985dominiocom` | [ Sergio Andrés ] |
 | **Desarrollador** | Adriana Lucia Lizcano Almeida| `@` | [Lucia-1234 ] |
 | **Desarrollador** | Wendy Vanesa Vera Arrieta| `@Wendy-vera` | [Wendy] |
