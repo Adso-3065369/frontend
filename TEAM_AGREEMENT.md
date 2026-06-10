@@ -32,6 +32,8 @@ Para avanzar en el proyecto, cada aprendiz debe cumplir este proceso secuencial:
 | :--- | :--- | :--- | :--- |
 | **Líder de Proyecto** | __________________ | `@` | [ ] |
 | **Desarrollador** | __________________ | `@` | [ ] |
+| **Desarrollador** | __________________ | `@` | [ ] |
+| **Desarrollador** | Alvaro Andres Salazar Herrera | `@AlvaroSaGit` | [Alvaro Andres Salazar Herrera] |
 | **Desarrollador** | Dylan Vesga | `@sfbtm` | [Dylan] |
 | **Desarrollador** | Wendy Vanesa Vera Arrieta| `@Wendy-vera` | [Wendy] |
 
