@@ -39,5 +39,5 @@ Para avanzar en el proyecto, cada aprendiz debe cumplir este proceso secuencial:
 | **Desarrollador** | Alvaro Andres Salazar Herrera | `@AlvaroSaGit` | [Alvaro Andres Salazar Herrera] |
 | **Desarrollador** | Dylan Vesga | `@sfbtm` | [Dylan] |
 | **Desarrollador** | Leidy Esmeralda Duarte Prada | `@Leidyesme` | [ Leidy ] |
-
+|**Desarrollador** | Juan Manuel Rodriguez Carreño | `@Juan788800` | [Juan Manuel Rodriguez Carreño ] |
 > *"El éxito de este PROYECTO DE DESARROLLO no depende de quién escriba más código, sino de quién demuestre mejor comprensión y rigor técnico en su análisis."*
