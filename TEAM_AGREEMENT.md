@@ -31,7 +31,7 @@ Para avanzar en el proyecto, cada aprendiz debe cumplir este proceso secuencial:
 | Rol | Nombre | Usuario GitHub | Firma |
 | :--- | :--- | :--- | :--- |
 | **Líder de Proyecto** | __________________ | `@` | [ ] |
-| **Desarrollador** | __________________ | `@` | [ ] |
+| **Desarrollador** | Jhonatan David Leherici Carrascal | `@Oatan150520` | [Jhonatan Leherici] |
 | **Desarrollador** | __________________ | `@` | [ ] |
 
 > *"El éxito de este PROYECTO DE DESARROLLO no depende de quién escriba más código, sino de quién demuestre mejor comprensión y rigor técnico en su análisis."*
