@@ -34,6 +34,7 @@ Para avanzar en el proyecto, cada aprendiz debe cumplir este proceso secuencial:
 | **Desarrollador** | Adriana Lucia Lizcano Almeida| `@` | [Lucia-1234 ] |
 | **Desarrollador** | __________________ | `@` | [ ] |
 | **Desarrollador** | __________________ | `@` | [ ] |
+| **Desarrollador** | Sol Angy Valentina Serrano Quintero | `@valentinaserrano20` | savsq |
 | **Desarrollador** | __________________ | `@` | [ ] |
 | **Desarrollador** | Alvaro Andres Salazar Herrera | `@AlvaroSaGit` | [Alvaro Andres Salazar Herrera] |
 | **Desarrollador** | Dylan Vesga | `@sfbtm` | [Dylan] |
