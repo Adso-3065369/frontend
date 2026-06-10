@@ -31,10 +31,11 @@ Para avanzar en el proyecto, cada aprendiz debe cumplir este proceso secuencial:
 | Rol | Nombre | Usuario GitHub | Firma |
 | :--- | :--- | :--- | :--- |
 | **Líder de Proyecto** | __________________ | `@` | [ ] |
-| **Líder de Proyecto** | Sergio Álvarez | `@andre1985dominiocom` | [ Sergio ] |
-| **Desarrollador** | __________________ | `@` | [ ] |
-| **Desarrollador** | __________________ | `@` | [ ] |
-| **Desarrollador** | __________________ | `@` | [ ] |
+  **Líder de Proyecto** | Sergio Andrés Álvarez | `@andre1985dominiocom` | [ Sergio Andrés ] |
+| **Desarrollador** | Adriana Lucia Lizcano Almeida| `@` | [Lucia-1234 ] |
+| **Desarrollador** | Wendy Vanesa Vera Arrieta| `@Wendy-vera` | [Wendy] |
+| **Desarrollador** | Sol Angy Valentina Serrano Quintero | `@valentinaserrano20` | savsq |
+| **Desarrollador** | Juan David Caceres Hernandez | `@javid495` | [ JuanDavid ] |
 | **Desarrollador** | Alvaro Andres Salazar Herrera | `@AlvaroSaGit` | [Alvaro Andres Salazar Herrera] |
 | **Desarrollador** | Dylan Vesga | `@sfbtm` | [Dylan] |
 | **Desarrollador** | Leidy Esmeralda Duarte Prada | `@Leidyesme` | [ Leidy ] |
