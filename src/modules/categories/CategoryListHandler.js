@@ -122,10 +122,23 @@ const handleHardDelete = async (btnElement, categoryRepo, refreshCallback) => {
         await refreshCallback(); 
     } catch (error) {
         console.error("Transacción de eliminación abortada:", error);
+
+        const errorMessage = error.response?.data?.message;
+
+        const status = error.response?.status;
+
+        const rawMessage = error.message?.toLowerCase() || "";
+
+
+        if (!errorMessage) {
+            if (status === 409 || rawMessage.includes("foreign key") || rawMessage.includes("constraint")) {
+                errorMessage = "No se pudo eliminar la categoría porque tiene productos asociados, remueva o reasigne los productos primero.";
+            } else {
+                errorMessage = error.message || "Fallo crítico al intentar eliminar el registro";
+            }
+        }
         
-        // Manejo del error 409 (Integridad referencial) inyectado desde el backend
-        const errorMessage = error.response?.data?.message || error.message || "Fallo crítico al intentar eliminar el registro.";
-        alert(`Operación denegada:\n${errorMessage}`);
+        alert(`Operación denegada:\n\n Razon: ${errorMessage}`);
         
         btnElement.innerHTML = originalContent;
         btnElement.disabled = false;
