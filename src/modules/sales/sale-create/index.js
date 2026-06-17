@@ -138,8 +138,8 @@ export const SaleCreateHandler = () => {
                 alert("✅ Transacción registrada con éxito.");
             }
         } catch (error) {
+
             console.error("Fallo en la transacción:", error);
-            alert (error);
             alert("❌ Ocurrió un error al registrar la venta. Revise su conexión.");
         } finally {
             checkSaveButtonStatus();
