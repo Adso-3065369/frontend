@@ -82,7 +82,8 @@ export const ClientCreateHandler = async () => {
         const rules = {
             document_number: {
                 required: true,
-                minLength: 5,
+                minLength: 7,
+                maxLength: 10,
                 pattern: /^[0-9]+$/,
                 patternMessage: 'El documento debe contener exclusivamente números.'
             },
@@ -94,9 +95,8 @@ export const ClientCreateHandler = async () => {
             },
             phone: {
                 required: true,
-                minLength: 7,
-                pattern: /^[0-9+\-\s]+$/,
-                patternMessage: 'El teléfono contiene caracteres no permitidos.'
+                pattern: /^[0-9]{10}$/,
+                patternMessage: 'El teléfono solo debe contener 10 digitos.'
             }
         };
 
