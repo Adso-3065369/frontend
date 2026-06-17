@@ -45,5 +45,6 @@ Para avanzar en el proyecto, cada aprendiz debe cumplir este proceso secuencial:
 | **Desarrollador** | Leidy Esmeralda Duarte Prada | `@Leidyesme` | [ Leidy ] |
 | **Desarrollador** | Juan Manuel Rodriguez Carreño | `@Juan788800` | [Juan Manuel Rodriguez Carreño ] |
 | **Desarrollador** | Santiago Carrillo Rivera  | `@santi1007312` | [ Santiago Carrillo Rivera ] |
-|**Desarrollador** | Michael Benavides | `@michaelfb803@gmail.com` | [michaelbenavides3 ] |
+| **Desarrollador** | Michael Benavides | `@michaelfb803@gmail.com` | [michaelbenavides3 ] |
+| **Desarrollador** | Anderson Murcia | `@andersonea19` | [Anderson Murcia] |
 > *"El éxito de este PROYECTO DE DESARROLLO no depende de quién escriba más código, sino de quién demuestre mejor comprensión y rigor técnico en su análisis."*
