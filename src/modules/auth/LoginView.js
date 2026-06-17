@@ -43,6 +43,11 @@ export const LoginView = async () => {
                             placeholder: '••••••••',
                             className: 'border-gray-700 focus:border-brand text-white'
                         })}
+                        <div class="flex justify-end mt-1">
+                            <a href="#/recuperar-contrasena" class="text-xs text-brand hover:underline transition-all font-medium">
+                                ¿Olvidó su contraseña?
+                            </a>
+                        </div>
                     </div>
 
                     ${Button({
