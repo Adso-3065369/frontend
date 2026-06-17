@@ -115,10 +115,16 @@ export const RegisterHandler = async () => {
         const formData = new FormData(form);
 
         const rules = {
-            fullName: { required: true, minLength: 3, message: 'El nombre completo es requerido.' },
-            email: { required: true, isEmail: true, message: 'Ingrese un correo electrónico válido.' },
-            password: { required: true, minLength: 6, message: 'La contraseña debe tener al menos 6 caracteres.' },
-            passwordConfirm: { required: true, minLength: 6, message: 'Confirme su contraseña por seguridad.' }
+            fullName: { required: true, minLength: 3, message: 'El nombre completo debe tener al menos 3 caracteres.' },
+            email: { required: true, isEmail: true, message: 'Ingrese un correo electrónico válido (ej: usuario@dominio.com).' },
+            password: {
+                required: true,
+                minLength: 8,
+                isStrongPassword: true,
+                minLengthMessage: 'La contraseña debe tener al menos 8 caracteres.',
+                strongMessage: 'La contraseña debe contener al menos una mayúscula (A-Z), una minúscula (a-z) y un número (0-9).'
+            },
+            passwordConfirm: { required: true, minLength: 8, message: 'Confirme su contraseña.' }
         };
 
         let { isValid, errors } = validateForm(formData, rules);
@@ -129,10 +135,7 @@ export const RegisterHandler = async () => {
 
         if (password && passwordConfirm && password !== passwordConfirm) {
             isValid = false;
-            errors.push({
-                field: 'passwordConfirm',
-                message: 'Las contraseñas ingresadas no coinciden.'
-            });
+            errors.passwordConfirm = 'Las contraseñas ingresadas no coinciden.';
         }
 
         displayFormErrors(form, errors);
