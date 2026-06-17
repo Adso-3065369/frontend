@@ -13,6 +13,7 @@ import { usersRoutes } from './users.routes.js';
 import { rolesRoutes } from './roles.routes.js';
 import { configRoutes } from './config.routes.js';
 import { clientsRoutes } from './clients.routes.js';
+import { profileRoutes } from './profile.routes.js';
 
 // Método para exportar las rutas unificadas del sistema
 export const routes = [
@@ -25,5 +26,6 @@ export const routes = [
     ...productsRoutes,
     ...salesRoutes,
     ...configRoutes,
-    ...clientsRoutes
+    ...clientsRoutes,
+    ...profileRoutes
 ];
