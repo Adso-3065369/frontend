@@ -26,7 +26,7 @@ import { PrivateLayout } from '@/layouts';
 
 export const profileRoutes = [
         { 
-            path: '#/profile', 
+            path: '#/perfil', 
             view: ProfileView, 
             init: ProfileHandler,
             requiresAuth: true,
