@@ -30,8 +30,10 @@ Para avanzar en el proyecto, cada aprendiz debe cumplir este proceso secuencial:
 
 | Rol | Nombre | Usuario GitHub | Firma |
 | :--- | :--- | :--- | :--- |
-| **Líder de Proyecto** | __________________ | `@` | [ ] |
-  **Líder de Proyecto** | Sergio Andrés Álvarez | `@andre1985dominiocom` | [ Sergio ] |
+| **Líder de Proyecto** | Eileen Julieth Mendoza Landinez | `@EileenMendoza18` | [ Eileen Mendoza ] |
+  **Líder de Proyecto** | Sergio Andrés Álvarez | `@andre1985dominiocom` | [ Sergio Andrés ] |
+| **Desarrollador** | Jhonatan David Leherici Carrascal | `@Oatan150520` | [Jhonatan Leherici] |
+| **Desarrollador** | Juan David | `Gratos356` | [juan david ramirez saavedra] |
 | **Desarrollador** | Adriana Lucia Lizcano Almeida| `@` | [Lucia-1234 ] |
 | **Desarrollador** | Wendy Vanesa Vera Arrieta| `@Wendy-vera` | [Wendy] |
 | **Desarrollador** | Jose Gabriel Roa Diaz | `@jogard24` | [joseRoa ] |
@@ -39,6 +41,10 @@ Para avanzar en el proyecto, cada aprendiz debe cumplir este proceso secuencial:
 | **Desarrollador** | Juan David Caceres Hernandez | `@javid495` | [ JuanDavid ] |
 | **Desarrollador** | Alvaro Andres Salazar Herrera | `@AlvaroSaGit` | [Alvaro Andres Salazar Herrera] |
 | **Desarrollador** | Dylan Vesga | `@sfbtm` | [Dylan] |
+| **Desarrollador** |Yimmer Samith  | `@Samith146` | [Samithh.ST ] |
 | **Desarrollador** | Leidy Esmeralda Duarte Prada | `@Leidyesme` | [ Leidy ] |
-|**Desarrollador** | Juan Manuel Rodriguez Carreño | `@Juan788800` | [Juan Manuel Rodriguez Carreño ] |
+| **Desarrollador** | Juan Manuel Rodriguez Carreño | `@Juan788800` | [Juan Manuel Rodriguez Carreño ] |
+| **Desarrollador** | Santiago Carrillo Rivera  | `@santi1007312` | [ Santiago Carrillo Rivera ] |
+| **Desarrollador** | Michael Benavides | `@michaelfb803@gmail.com` | [michaelbenavides3 ] |
+| **Desarrollador** | Anderson Murcia | `@andersonea19` | [Anderson Murcia] |
 > *"El éxito de este PROYECTO DE DESARROLLO no depende de quién escriba más código, sino de quién demuestre mejor comprensión y rigor técnico en su análisis."*
