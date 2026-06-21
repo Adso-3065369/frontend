@@ -159,10 +159,14 @@ export const ProductEditHandler = async (params) => {
             productName: {
                 required: true,
                 minLength: 3,
+                pattern: /^(?!\s*\d+\s*$).+$/,
+                patternMessage: 'El nombre del producto no puede ser puramente numérico.',
                 message: 'El nombre del producto es obligatorio y debe contener al menos 3 caracteres.'
             },
             productPrice: {
                 required: true,
+                pattern: /^\s*(?!0+(?:\.0+)?$)\d+(?:\.\d+)?\s*$/,
+                patternMessage: 'El precio unitario debe ser un número mayor a 0.',
                 message: 'El precio unitario es obligatorio.'
             },
             productStock: {
