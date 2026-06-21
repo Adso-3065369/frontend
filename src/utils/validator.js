@@ -39,6 +39,30 @@ export const validateForm = (formData, rules) => {
             errors[fieldName] = rule.patternMessage || rule.message || 'El formato de este campo no es válido.';
             return;
         }
+
+        // 4. Regla: Correo Electrónico
+        if (rule.isEmail && typeof value === 'string') {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(value.trim())) {
+                isValid = false;
+                errors[fieldName] = rule.emailMessage || rule.message || 'Ingrese un correo electrónico válido.';
+                return;
+            }
+        }
+
+        // 5. Regla: Contraseña Fuerte (mayúscula + minúscula + número)
+        if (rule.isStrongPassword && typeof value === 'string') {
+            const hasUppercase = /[A-Z]/.test(value);
+            const hasLowercase = /[a-z]/.test(value);
+            const hasNumber   = /[0-9]/.test(value);
+
+            if (!hasUppercase || !hasLowercase || !hasNumber) {
+                isValid = false;
+                errors[fieldName] = rule.strongMessage || rule.message ||
+                    'La contraseña debe contener al menos una mayúscula, una minúscula y un número.';
+                return;
+            }
+        }
     });
 
     return { isValid, errors };
