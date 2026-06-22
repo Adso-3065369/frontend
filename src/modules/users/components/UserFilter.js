@@ -9,9 +9,13 @@
  * @returns {string} El HTML del componente.
  */
 export const UserFilter = (onFilterChange) => {
-    // Escuchar eventos mediante delegación en el document para capturar interacciones
-    // de elementos dinámicos que se inyectan en el DOM
-    const handleInputEvent = (e) => {
+    // Limpiamos escuchadores antiguos para prevenir fugas de memoria o múltiples callbacks acumulados
+    if (window.handleUserFilterInputEvent) {
+        document.removeEventListener('input', window.handleUserFilterInputEvent);
+        document.removeEventListener('change', window.handleUserFilterInputEvent);
+    }
+
+    window.handleUserFilterInputEvent = (e) => {
         if (e.target && (e.target.id === 'filter-search' || e.target.id === 'filter-role')) {
             const searchVal = document.getElementById('filter-search')?.value || '';
             const roleVal = document.getElementById('filter-role')?.value || '';
@@ -20,8 +24,8 @@ export const UserFilter = (onFilterChange) => {
     };
 
     // Usamos delegación de eventos en el documento para el input y el cambio
-    document.addEventListener('input', handleInputEvent);
-    document.addEventListener('change', handleInputEvent);
+    document.addEventListener('input', window.handleUserFilterInputEvent);
+    document.addEventListener('change', window.handleUserFilterInputEvent);
 
     return `
         <div class="app-card p-4 flex flex-col sm:flex-row gap-4 items-center justify-between border border-gray-800/60 rounded-2xl mb-6 shadow-md bg-[#0F0F12]">

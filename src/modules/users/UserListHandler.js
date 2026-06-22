@@ -1,11 +1,10 @@
 import { createRepository } from '@/repositories';
-import { DataTable, Link, Button, Badge } from '@/components/ui';
-import { RenderIf, filterUsers } from '@/utils';
-import { setupUserFilterListeners } from './components/UserFilter.js';
+import { DataTable, Link, Button, Pagination, Badge } from '@/components/ui';
+import { RenderIf } from '@/utils';
 
 /**
  * @file UserListHandler.js
- * @description Orquestador del listado de usuarios. Gestiona la filtración en la vista,
+ * @description Orquestador del listado de usuarios. Gestiona la paginación de red,
  * el mapeo de roles y las estadísticas de transacciones (ventas) por usuario.
  */
 
@@ -86,12 +85,12 @@ const userColumns = [
 ];
 
 // ============================================================================
-// 2. FASE DE RENDERIZADO DE LA TABLA (Client-Side Rendering)
+// 2. FASE DE CARGA DE DATOS Y RENDERIZADO (Client-Side Filtering)
 // ============================================================================
-const renderUsersTable = (users, tableContainer, isFiltered = false) => {
+const renderUsersTable = (usersToRender, tableContainer, isFiltered = false) => {
     const tableHtml = DataTable({
         columns: userColumns,
-        data: users,
+        data: usersToRender,
         emptyMessage: isFiltered 
             ? 'No se encontraron usuarios bajo esos parámetros.' 
             : 'El directorio de usuarios está vacío.'
@@ -138,19 +137,18 @@ export const UserListHandler = async () => {
     if (!tableContainer) return;
 
     let allUsers = [];
-    let currentSearchTerm = '';
-    let currentRoleTerm = '';
 
     const refreshView = async () => {
         try {
-            // Obtenemos todos los usuarios desactivando la paginación del servidor
+            // Se cargan todos los usuarios de la base de datos (paginate=false)
             const response = await userRepo.getAll('?paginate=false');
-            
-            // Desempaquetado dual defensivo
             const payload = response.data || response;
             allUsers = Array.isArray(payload) ? payload : (payload.data || []);
             
-            applyFiltersAndRender();
+            // Asignamos al objeto global para que la vista pueda leerlos al filtrar
+            window.allUsers = allUsers;
+            
+            renderUsersTable(allUsers, tableContainer, false);
         } catch (error) {
             console.error("Fallo de red en la extracción de usuarios:", error);
             tableContainer.innerHTML = `
@@ -161,21 +159,20 @@ export const UserListHandler = async () => {
         }
     };
 
-    const applyFiltersAndRender = () => {
-        const filtered = filterUsers(allUsers, currentSearchTerm, currentRoleTerm);
-        const isFiltered = !!(currentSearchTerm || currentRoleTerm);
-        renderUsersTable(filtered, tableContainer, isFiltered);
+    // Suscribirse al evento de lista actualizada lanzada por el callback del filtro de la vista
+    if (window.userListUpdatedListener) {
+        document.removeEventListener('user-list-updated', window.userListUpdatedListener);
+    }
+
+    window.userListUpdatedListener = (e) => {
+        const { filteredUsers } = e.detail;
+        renderUsersTable(filteredUsers, tableContainer, true);
     };
+
+    document.addEventListener('user-list-updated', window.userListUpdatedListener);
 
     // Carga inicial
     await refreshView();
-
-    // Vinculamos los escuchadores del filtro a la vista
-    setupUserFilterListeners((searchVal, roleVal) => {
-        currentSearchTerm = searchVal;
-        currentRoleTerm = roleVal;
-        applyFiltersAndRender();
-    });
 
     tableContainer.addEventListener('click', async (e) => {
         // --- Trigger de Eliminación ---
