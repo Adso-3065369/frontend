@@ -54,8 +54,9 @@ const categoryColumns = [
                     Button({
                         variant: 'danger',
                         icon: '<i class="ri-delete-bin-line"></i>',
-                        className: 'w-8 h-8 p-0 flex items-center justify-center',
-                        title: category.has_products ? 'No se puede eliminar (Tiene productos)' : 'Eliminar Categoría',
+                        // Si tiene productos, deshabilitamos y ponemos el mensaje de advertencia
+                        className: `w-8 h-8 p-0 flex items-center justify-center ${category.has_products ? 'cursor-not-allowed opacity-50' : ''}`,
+                        title: category.has_products ? 'Esta categoría tiene productos vinculados y no puede ser eliminada' : 'Eliminar Categoría',
                         disabled: category.has_products,
                         dataset: { action: 'delete', id: category.id }
                     })
