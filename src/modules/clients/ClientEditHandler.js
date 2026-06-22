@@ -1,5 +1,5 @@
 import { createRepository } from '@/repositories';
-import { validateForm, displayFormErrors } from '@/utils';
+import { validateForm, displayFormErrors, clientRules } from '@/utils';
 
 /**
  * @file ClientEditHandler.js
@@ -118,29 +118,9 @@ export const ClientEditHandler = async () => {
         e.preventDefault();
         const formData = new FormData(form);
 
-        // Reglas de validación estandarizadas
-        const rules = {
-            document_number: {
-                required: true,
-                minLength: 7,
-                maxLength: 10,
-                pattern: /^[0-9]+$/,
-                patternMessage: 'El documento debe contener exclusivamente números.'
-            },
-            name: { required: true, minLength: 3 },
-            email: {
-                required: true,
-                pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                patternMessage: 'Ingrese un formato de correo válido.'
-            },
-            phone: {
-                required: true,
-                pattern: /^[0-9]{10}$/,
-                patternMessage: 'El teléfono solo debe contener 10 digitos.'
-            }
-        };
 
-        const { isValid, errors } = validateForm(formData, rules);
+
+        const { isValid, errors } = validateForm(formData, clientRules);
         displayFormErrors(form, errors);
 
         if (!isValid) return;
