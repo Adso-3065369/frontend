@@ -1,5 +1,6 @@
 import { Link } from '@/components/ui';
 import { RenderIf } from '@/utils';
+import { UserFilter } from './components/UserFilter.js';
 
 /**
  * @file UserListView.js
@@ -24,6 +25,9 @@ export const UserListView = async () => {
                 )}
                 </div>
             </div>
+
+            <!-- Filtros de Búsqueda y Rol -->
+            ${UserFilter()}
 
             <div id="users-table-container" class="app-card overflow-hidden">
                 <div class="px-6 py-12 text-center text-text-secondary italic">

@@ -1,10 +1,11 @@
 import { createRepository } from '@/repositories';
-import { DataTable, Link, Button, Pagination, Badge } from '@/components/ui';
-import { RenderIf } from '@/utils';
+import { DataTable, Link, Button, Badge } from '@/components/ui';
+import { RenderIf, filterUsers } from '@/utils';
+import { setupUserFilterListeners } from './components/UserFilter.js';
 
 /**
  * @file UserListHandler.js
- * @description Orquestador del listado de usuarios. Gestiona la paginación de red,
+ * @description Orquestador del listado de usuarios. Gestiona la filtración en la vista,
  * el mapeo de roles y las estadísticas de transacciones (ventas) por usuario.
  */
 
@@ -85,41 +86,18 @@ const userColumns = [
 ];
 
 // ============================================================================
-// 2. FASE DE CARGA DE DATOS Y RENDERIZADO (Server-Side Pagination)
+// 2. FASE DE RENDERIZADO DE LA TABLA (Client-Side Rendering)
 // ============================================================================
-const loadAndRenderUsers = async (userRepo, tableContainer, page = 1, limit = 10, search = '') => {
-    try {
-        const searchParam = search ? `&search=${encodeURIComponent(search)}` : '';
-        const queryString = `?page=${page}&limit=${limit}${searchParam}`;
-        
-        const response = await userRepo.getAll(queryString);
-        
-        // Desempaquetado dual defensivo
-        const payload = response.data || response;
-        const users = Array.isArray(payload) ? payload : (payload.data || []);
-        const meta = payload.meta || null;
-        
-        const tableHtml = DataTable({
-            columns: userColumns,
-            data: users,
-            emptyMessage: search 
-                ? 'No se encontraron usuarios bajo esos parámetros.' 
-                : 'El directorio de usuarios está vacío.'
-        });
+const renderUsersTable = (users, tableContainer, isFiltered = false) => {
+    const tableHtml = DataTable({
+        columns: userColumns,
+        data: users,
+        emptyMessage: isFiltered 
+            ? 'No se encontraron usuarios bajo esos parámetros.' 
+            : 'El directorio de usuarios está vacío.'
+    });
 
-        // Inyección del componente paginador unificado
-        const paginationHtml = meta ? Pagination({ meta, itemName: 'usuarios' }) : '';
-
-        tableContainer.innerHTML = tableHtml + paginationHtml;
-        
-    } catch (error) {
-        console.error("Fallo de red en la extracción de usuarios:", error);
-        tableContainer.innerHTML = `
-            <div class="p-6 text-center text-red-500 font-bold bg-red-500/10 border border-red-500 m-4 rounded-lg">
-                Fallo de comunicación con el servidor al intentar cargar el directorio.
-            </div>
-        `;
-    }
+    tableContainer.innerHTML = tableHtml;
 };
 
 // ============================================================================
@@ -159,35 +137,47 @@ export const UserListHandler = async () => {
 
     if (!tableContainer) return;
 
-    let currentPage = 1;
-    const itemsPerPage = 10;
+    let allUsers = [];
     let currentSearchTerm = '';
+    let currentRoleTerm = '';
 
     const refreshView = async () => {
-        await loadAndRenderUsers(
-            userRepo, 
-            tableContainer, 
-            currentPage, 
-            itemsPerPage, 
-            currentSearchTerm
-        );
+        try {
+            // Obtenemos todos los usuarios desactivando la paginación del servidor
+            const response = await userRepo.getAll('?paginate=false');
+            
+            // Desempaquetado dual defensivo
+            const payload = response.data || response;
+            allUsers = Array.isArray(payload) ? payload : (payload.data || []);
+            
+            applyFiltersAndRender();
+        } catch (error) {
+            console.error("Fallo de red en la extracción de usuarios:", error);
+            tableContainer.innerHTML = `
+                <div class="p-6 text-center text-red-500 font-bold bg-red-500/10 border border-red-500 m-4 rounded-lg">
+                    Fallo de comunicación con el servidor al intentar cargar el directorio.
+                </div>
+            `;
+        }
     };
 
+    const applyFiltersAndRender = () => {
+        const filtered = filterUsers(allUsers, currentSearchTerm, currentRoleTerm);
+        const isFiltered = !!(currentSearchTerm || currentRoleTerm);
+        renderUsersTable(filtered, tableContainer, isFiltered);
+    };
+
+    // Carga inicial
     await refreshView();
 
-    tableContainer.addEventListener('click', async (e) => {
-        
-        // --- Intercepción del Paginador ---
-        const btnPaginate = e.target.closest('button[data-action="paginate"]');
-        if (btnPaginate && !btnPaginate.disabled) {
-            const newPage = parseInt(btnPaginate.dataset.page, 10);
-            if (!isNaN(newPage)) {
-                currentPage = newPage;
-                await refreshView();
-            }
-            return;
-        }
+    // Vinculamos los escuchadores del filtro a la vista
+    setupUserFilterListeners((searchVal, roleVal) => {
+        currentSearchTerm = searchVal;
+        currentRoleTerm = roleVal;
+        applyFiltersAndRender();
+    });
 
+    tableContainer.addEventListener('click', async (e) => {
         // --- Trigger de Eliminación ---
         const btnDelete = e.target.closest('button[data-action="delete"]');
         if (btnDelete && !btnDelete.disabled) {
