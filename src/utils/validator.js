@@ -82,3 +82,32 @@ export const displayFormErrors = (form, errors = {}) => {
         }
     });
 };
+
+export const clientRules = {
+    document_number: {
+        required: true,
+        minLength: 7,
+        minLengthMessage: 'El documento debe tener mínimo 7 dígitos.',
+        maxLength: 10,
+        maxLengthMessage: 'El documento debe tener máximo 10 dígitos.',
+        pattern: /^[0-9]+$/,
+        patternMessage: 'El documento debe contener exclusivamente números.'
+    },
+    name: {
+        required: true,
+        minLength: 3,
+        minLengthMessage: 'El nombre debe tener mínimo 3 caracteres.',
+        pattern: /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]+$/,
+        patternMessage: 'El nombre solo debe contener letras.'
+    },
+    email: {
+        required: true,
+        pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+        patternMessage: 'Ingrese un formato de correo válido (ejemplo@gmail.com).'
+    },
+    phone: {
+        required: true,
+        pattern: /^[0-9]{10}$/,
+        patternMessage: 'El teléfono solo debe contener 10 dígitos.'
+    }
+};
