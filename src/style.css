@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
 /* =========================================
-   1. VARIABLES NATIVAS (Arquitectura Base)
+    1. VARIABLES NATIVAS (Arquitectura Base)
    ========================================= */
 
 :root {
   /* -----------------------------------------
-     A. NUEVAS VARIABLES SEMÁNTICAS (El Futuro) 
+      A. NUEVAS VARIABLES SEMÁNTICAS (El Futuro) 
      ----------------------------------------- */
   --primary: #fdda24;
   --primary-dark: #d4bf35;
@@ -29,15 +29,15 @@
   --nav-bg: color-mix(in srgb, var(--bg-base) 95%, transparent);
 
   /* -----------------------------------------
-     B. CAPA DE COMPATIBILIDAD LEGACY (No Borrar Aún)
-     Mantiene vivo el código actual apuntando a lo semántico.
+      B. CAPA DE COMPATIBILIDAD LEGACY (No Borrar Aún)
+      Mantiene vivo el código actual apuntando a lo semántico.
      ----------------------------------------- */
   --brand: var(--primary);
   --brand-dark: var(--primary-dark);
 }
 
 /* =========================================
-   2. PUENTE CON TAILWIND V4
+    2. PUENTE CON TAILWIND V4
    ========================================= */
 @theme {
   /* Variables Semánticas (Usa estas a partir de hoy: text-primary, bg-primary) */
@@ -61,7 +61,7 @@
 }
 
 /* =========================================
-   3. ESTILOS BASE
+    3. ESTILOS BASE
    ========================================= */
 @layer base {
   * {
@@ -99,7 +99,7 @@
 }
 
 /* =========================================
-   4. UTILIDADES CUSTOM (Soporte dinámico y Legacy)
+    4. UTILIDADES CUSTOM (Soporte dinámico y Legacy)
    ========================================= */
 @layer utilities {
   /* Se agrupan clases semánticas y legacy para no romper el HTML actual */
@@ -135,7 +135,7 @@
 }
 
 /* =========================================
-   5. ANIMACIONES
+    5. ANIMACIONES
    ========================================= */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(30px); }
@@ -195,7 +195,7 @@
 .opacity-0-init { opacity: 0; }
 
 /* =========================================
-   6. COMPONENTES ESPECÍFICOS
+    6. COMPONENTES ESPECÍFICOS
    ========================================= */
 .nav-scrolled {
   background-color: var(--nav-bg) !important;

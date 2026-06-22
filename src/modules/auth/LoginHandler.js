@@ -16,7 +16,6 @@ const submitToServer = async (formData, authRepo, submitBtn, form) => {
     try {
         const email = formData.get('email').trim();
         const password = formData.get('password').trim();
-
         // 1. Petición POST al backend
         const response = await authRepo.create({ email, password });            
 
