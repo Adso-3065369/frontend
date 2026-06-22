@@ -1,30 +1,27 @@
 /**
  * @file filterUsers.js
- * @description Utilidad pura para filtrar usuarios localmente en el frontend por texto de búsqueda y rol.
- */
-
-/**
- * Filtra un arreglo de usuarios según el texto de búsqueda y el rol seleccionado.
- * @param {Array<Object>} users - Colección de usuarios a filtrar.
- * @param {string} search - Término de búsqueda (aplica sobre nombre y correo).
- * @param {string} roleName - Nombre del rol por el cual filtrar (vacío si no hay filtro).
+ * @description Filtra una lista de usuarios basándose en un término de búsqueda (nombre/correo) y un rol seleccionado.
+ * @param {Array<Object>} users - Lista completa de usuarios.
+ * @param {string} searchTerm - Término de búsqueda.
+ * @param {string} roleName - Nombre del rol seleccionado.
  * @returns {Array<Object>} Lista filtrada de usuarios.
  */
-export const filterUsers = (users, search = '', roleName = '') => {
+export function filterUsers(users, searchTerm = '', roleName = '') {
     if (!Array.isArray(users)) return [];
 
-    const searchLower = String(search).trim().toLowerCase();
-    const targetRole = String(roleName).trim();
+    const cleanSearch = searchTerm.trim().toLowerCase();
+    const cleanRole = roleName.trim();
 
     return users.filter(user => {
-        // 1. Filtrado por texto (Nombre o Correo)
-        const name = String(user.name || '').toLowerCase();
-        const email = String(user.email || '').toLowerCase();
-        const matchesSearch = !searchLower || name.includes(searchLower) || email.includes(searchLower);
+        // Filtro por nombre o correo (búsqueda de subcadena insensible a mayúsculas/minúsculas)
+        const matchesSearch = !cleanSearch || 
+            (user.name && user.name.toLowerCase().includes(cleanSearch)) || 
+            (user.email && user.email.toLowerCase().includes(cleanSearch));
 
-        // 2. Filtrado por Rol
-        const matchesRole = !targetRole || (Array.isArray(user.roles) && user.roles.some(role => String(role.name) === targetRole));
+        // Filtro por rol
+        const matchesRole = !cleanRole || 
+            (user.roles && user.roles.some(r => r.name === cleanRole));
 
         return matchesSearch && matchesRole;
     });
-};
+}
