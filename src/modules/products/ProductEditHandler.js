@@ -4,7 +4,7 @@ import { validateForm, displayFormErrors } from '@/utils';
 
 /**
  * @file ProductEditHandler.js
- * @description Orquesta la edición de productos separando las responsabilidades de 
+ * @description Orquesta la edición de productos separando las responsabilidades de
  * inicialización visual, validación de eventos y comunicación con el servidor.
  */
 
@@ -15,13 +15,13 @@ const initializeView = async (productId, productRepo, categoryRepo) => {
     const mountContainer = document.getElementById('category-select-container');
 
     try {
-        // 🚀 AJUSTE: Petición concurrente forzando el modo plano para las categorías
+        // Petición concurrente forzando el modo plano para las categorías
         const [categoryResponse, productResponse] = await Promise.all([
             categoryRepo.getAll('?paginate=false'),
             productRepo.getById(productId)
         ]);
 
-        // 🚀 AJUSTE: Extracción segura del arreglo de categorías
+        // Extracción segura del arreglo de categorías
         const catPayload = categoryResponse.data || categoryResponse;
         const categories = Array.isArray(catPayload) ? catPayload : (catPayload.data || []);
 
@@ -34,12 +34,26 @@ const initializeView = async (productId, productRepo, categoryRepo) => {
             return;
         }
 
-        // Inyección de valores estándar en los inputs del DOM
-        document.getElementById('productId').value = product.id;
-        document.getElementById('productCode').value = product.code || '';
-        document.getElementById('productName').value = product.name || '';
-        document.getElementById('productPrice').value = product.price || '';
-        document.getElementById('productStock').value = product.stock || 0;
+        // Verificar que los elementos del DOM aún existen antes
+        // de asignar valores. Si el Promise.all tarda y el router navega mientras
+        // espera la respuesta, el DOM ya no existe y getElementById devuelve null,
+        // causando el crash "Cannot set properties of null (setting 'value')".
+        const idField    = document.getElementById('productId');
+        const codeField  = document.getElementById('productCode');
+        const nameField  = document.getElementById('productName');
+        const priceField = document.getElementById('productPrice');
+        const stockField = document.getElementById('productStock');
+
+        if (!idField) {
+            // La vista ya fue desmontada por el router; se aborta silenciosamente.
+            return;
+        }
+
+        idField.value    = product.id;
+        codeField.value  = product.code  || '';
+        nameField.value  = product.name  || '';
+        priceField.value = product.price || '';
+        stockField.value = product.stock ?? 0;
 
         // Mapeo de categorías y evaluación estricta de selección
         const formattedOptions = categories.map(cat => ({
@@ -85,13 +99,13 @@ const submitToServer = async (productId, formData, form, productRepo, submitBtn)
         };
 
         await productRepo.update(productId, updatedProductPayload);
-        
+
         alert("El registro ha sido actualizado con éxito en el sistema.");
         window.location.hash = '#/productos';
-        
+
     } catch (error) {
         console.error("Fallo durante la transacción de actualización:", error);
-        
+
         submitBtn.innerHTML = originalBtnText;
         submitBtn.disabled = false;
 
@@ -102,15 +116,15 @@ const submitToServer = async (productId, formData, form, productRepo, submitBtn)
         // DTO Estructurado (Validaciones Zod)
         if (serverErrors && typeof serverErrors === 'object' && !Array.isArray(serverErrors) && Object.keys(serverErrors).length > 0) {
             displayFormErrors(form, serverErrors);
-            return; 
+            return;
         }
 
         // Mapeo Semántico Dinámico (Ej: Atrapar código duplicado al actualizar)
         const semanticDictionary = {
-            productCode: ['código', 'codigo', 'sku', 'code', 'duplicado', 'ya existe'],
-            productName: ['nombre', 'name'],
+            productCode:     ['código', 'codigo', 'sku', 'code', 'duplicado', 'ya existe'],
+            productName:     ['nombre', 'name'],
             productCategory: ['categoría', 'category'],
-            productStock: ['stock', 'inventario', 'cantidad', 'existencias']
+            productStock:    ['stock', 'inventario', 'cantidad', 'existencias']
         };
 
         const dynamicErrors = {};
@@ -133,12 +147,21 @@ const submitToServer = async (productId, formData, form, productRepo, submitBtn)
 // 3. ORQUESTADOR PRINCIPAL: Eventos y Validaciones (Exportación Central)
 // ============================================================================
 export const ProductEditHandler = async (params) => {
-    const productRepo = createRepository('products');
+    const productRepo  = createRepository('products');
     const categoryRepo = createRepository('categories');
-    
-    const productId = params.id;
-    const form = document.getElementById('form-edit-product');
 
+    // Parsear el id a número entero. Desde la URL siempre llega
+    // como string ("5"), y algunos backends no encuentran el recurso si reciben
+    // un tipo inesperado, devolviendo null o un error que desencadena el crash.
+    const productId = parseInt(params.id, 10);
+
+    if (isNaN(productId)) {
+        alert("ID de producto inválido.");
+        window.location.hash = '#/productos';
+        return;
+    }
+
+    const form = document.getElementById('form-edit-product');
     if (!form) return;
 
     await initializeView(productId, productRepo, categoryRepo);
@@ -183,8 +206,7 @@ export const ProductEditHandler = async (params) => {
         if (!isValid) return;
 
         const submitBtn = form.querySelector('button[type="submit"]');
-        
-        // Pasamos 'form' como argumento adicional para el displayFormErrors
+
         await submitToServer(productId, formData, form, productRepo, submitBtn);
     });
 };
