@@ -56,18 +56,18 @@ export const Navbar = () => {
                 <span class="block text-xs text-text-secondary mt-0.5">${roleName}</span>
             </div>
 
-            <div class="p-2 flex flex-col gap-1">
+            <div class="p-2 flex flex-col gap-1 flex">
                 ${Link({
                     href: '#/perfil',
                     variant: 'ghost',
                     text: '<i class="ri-user-settings-line text-lg mr-2"></i> Administrar Perfil',
-                    className: 'flex items-center px-3 py-2.5 text-sm font-bold text-text-secondary hover:text-white hover:bg-bg-hover rounded-lg transition-colors'
+                    className: 'flex items-center justify-start px-3 py-2.5 text-sm font-bold text-text-secondary hover:text-white hover:bg-bg-hover rounded-lg transition-colors'
                 })}
                 ${Link({
                     href: '#/configuracion',
                     variant: 'ghost',
                     text: '<i class="ri-settings-4-line text-lg mr-2"></i> Configuración',
-                    className: 'flex items-center px-3 py-2.5 text-sm font-bold text-text-secondary hover:text-white hover:bg-bg-hover rounded-lg transition-colors'
+                    className: 'flex items-center justify-start px-3 py-2.5 text-sm font-bold text-text-secondary hover:text-white hover:bg-bg-hover rounded-lg transition-colors'
                 })}
             </div>
 
