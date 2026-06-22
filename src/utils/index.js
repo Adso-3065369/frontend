@@ -3,3 +3,4 @@ export * from './authorization.js';
 export * from './formatCurrency.js';
 export * from './chart.factory.js';
 export * from './debounce.js';
+export * from './filterUsers.js';

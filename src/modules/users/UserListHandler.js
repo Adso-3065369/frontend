@@ -85,41 +85,18 @@ const userColumns = [
 ];
 
 // ============================================================================
-// 2. FASE DE CARGA DE DATOS Y RENDERIZADO (Server-Side Pagination)
+// 2. FASE DE CARGA DE DATOS Y RENDERIZADO (Client-Side Filtering)
 // ============================================================================
-const loadAndRenderUsers = async (userRepo, tableContainer, page = 1, limit = 10, search = '') => {
-    try {
-        const searchParam = search ? `&search=${encodeURIComponent(search)}` : '';
-        const queryString = `?page=${page}&limit=${limit}${searchParam}`;
-        
-        const response = await userRepo.getAll(queryString);
-        
-        // Desempaquetado dual defensivo
-        const payload = response.data || response;
-        const users = Array.isArray(payload) ? payload : (payload.data || []);
-        const meta = payload.meta || null;
-        
-        const tableHtml = DataTable({
-            columns: userColumns,
-            data: users,
-            emptyMessage: search 
-                ? 'No se encontraron usuarios bajo esos parámetros.' 
-                : 'El directorio de usuarios está vacío.'
-        });
+const renderUsersTable = (usersToRender, tableContainer, isFiltered = false) => {
+    const tableHtml = DataTable({
+        columns: userColumns,
+        data: usersToRender,
+        emptyMessage: isFiltered 
+            ? 'No se encontraron usuarios bajo esos parámetros.' 
+            : 'El directorio de usuarios está vacío.'
+    });
 
-        // Inyección del componente paginador unificado
-        const paginationHtml = meta ? Pagination({ meta, itemName: 'usuarios' }) : '';
-
-        tableContainer.innerHTML = tableHtml + paginationHtml;
-        
-    } catch (error) {
-        console.error("Fallo de red en la extracción de usuarios:", error);
-        tableContainer.innerHTML = `
-            <div class="p-6 text-center text-red-500 font-bold bg-red-500/10 border border-red-500 m-4 rounded-lg">
-                Fallo de comunicación con el servidor al intentar cargar el directorio.
-            </div>
-        `;
-    }
+    tableContainer.innerHTML = tableHtml;
 };
 
 // ============================================================================
@@ -159,35 +136,45 @@ export const UserListHandler = async () => {
 
     if (!tableContainer) return;
 
-    let currentPage = 1;
-    const itemsPerPage = 10;
-    let currentSearchTerm = '';
+    let allUsers = [];
 
     const refreshView = async () => {
-        await loadAndRenderUsers(
-            userRepo, 
-            tableContainer, 
-            currentPage, 
-            itemsPerPage, 
-            currentSearchTerm
-        );
+        try {
+            // Se cargan todos los usuarios de la base de datos (paginate=false)
+            const response = await userRepo.getAll('?paginate=false');
+            const payload = response.data || response;
+            allUsers = Array.isArray(payload) ? payload : (payload.data || []);
+            
+            // Asignamos al objeto global para que la vista pueda leerlos al filtrar
+            window.allUsers = allUsers;
+            
+            renderUsersTable(allUsers, tableContainer, false);
+        } catch (error) {
+            console.error("Fallo de red en la extracción de usuarios:", error);
+            tableContainer.innerHTML = `
+                <div class="p-6 text-center text-red-500 font-bold bg-red-500/10 border border-red-500 m-4 rounded-lg">
+                    Fallo de comunicación con el servidor al intentar cargar el directorio.
+                </div>
+            `;
+        }
     };
 
+    // Suscribirse al evento de lista actualizada lanzada por el callback del filtro de la vista
+    if (window.userListUpdatedListener) {
+        document.removeEventListener('user-list-updated', window.userListUpdatedListener);
+    }
+
+    window.userListUpdatedListener = (e) => {
+        const { filteredUsers } = e.detail;
+        renderUsersTable(filteredUsers, tableContainer, true);
+    };
+
+    document.addEventListener('user-list-updated', window.userListUpdatedListener);
+
+    // Carga inicial
     await refreshView();
 
     tableContainer.addEventListener('click', async (e) => {
-        
-        // --- Intercepción del Paginador ---
-        const btnPaginate = e.target.closest('button[data-action="paginate"]');
-        if (btnPaginate && !btnPaginate.disabled) {
-            const newPage = parseInt(btnPaginate.dataset.page, 10);
-            if (!isNaN(newPage)) {
-                currentPage = newPage;
-                await refreshView();
-            }
-            return;
-        }
-
         // --- Trigger de Eliminación ---
         const btnDelete = e.target.closest('button[data-action="delete"]');
         if (btnDelete && !btnDelete.disabled) {
