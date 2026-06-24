@@ -115,7 +115,7 @@ export const RegisterHandler = async () => {
         const formData = new FormData(form);
 
         const rules = {
-            fullName: { required: true, minLength: 3,message: 'El nombre completo es requerido.' },
+            fullName: { required: true, minLength: 3, message: 'El nombre completo es requerido.' },
             email: { required: true, isEmail: true, message: 'Ingrese un correo electrónico válido.' },
             password: { required: true, minLength: 6, message: 'La contraseña debe tener al menos 6 caracteres.' },
             passwordConfirm: { required: true, minLength: 6, message: 'Confirme su contraseña por seguridad.' }
@@ -124,18 +124,25 @@ export const RegisterHandler = async () => {
         // Ejecutamos el validador de utils
         let { isValid, errors } = validateForm(formData, rules);
 
-        // Aseguramos que errors se comporte como un objeto para poder manipularlo
+        // se guardan los errores del formulario si se daña o viene vacia esto lo borrar y crea una caja  nueva y limpia con el {} para que el sistema no se trabe ni se rompa 
         if (!errors || Array.isArray(errors)) { errors = {}; }
 
-        // 2. Validación Manual del Formato 
+        // creamos una lista en blanco llamada error en el cual va a ir anotando en fila los problemas que se encuentre ala hora de validar un registro de usuario 
+        // usando la orden .push() para ir agregando los errores que se vayan encontrando en el formulario de registro de usuario
+        const error = [];
+
+        // el namevalue agarra el nombre que escribio el usuario y le quita los espacios de mas.
         const nameValue = formData.get('fullName')?.trim() || '';
+        // la expresion  solo_Letras permite que el nombre completo solo contenga letras y espacios, no se permiten numeros ni caracteres especiales.
         const solo_Letras = /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$/;
 
-        // Si el campo NO está vacío, pero tiene números o símbolos...
+        // hacemos una condicional si el usuario escribe algun numero o caracter especial se congela el envio del  isvalid = false y manda el error en el campo de fullName.
         if (nameValue !== '' && !solo_Letras.test(nameValue)) {
             isValid = false;
-            //  error para mostrar el mensaje de formato
-            errors.fullName = 'El nombre completo solo debe contener letras no se permiten numeros ni caracteres especiales.';
+            error.push({
+                field: 'fullName',
+                message: 'El nombre completo solo debe contener letras no se permiten numeros ni caracteres especiales.'
+            });
         }
 
         // Regla de Negocio Local: Coincidencia de Contraseñas
@@ -144,11 +151,15 @@ export const RegisterHandler = async () => {
 
         if (password && passwordConfirm && password !== passwordConfirm) {
             isValid = false;
-            errors.push({
+            error.push({
                 field: 'passwordConfirm',
                 message: 'Las contraseñas ingresadas no coinciden.'
             });
         }
+
+        error.forEach(error => {
+            errors[error.field] = error.message;
+        });
 
         displayFormErrors(form, errors);
 
