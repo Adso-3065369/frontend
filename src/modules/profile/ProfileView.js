@@ -21,12 +21,6 @@ export const ProfileView = async () => {
                 id: 'profile-card',
                 className:'flex-row gap-5 items-center px-5 py-10 justify-between'
             })}
-            <div id="users-table-container" class="app-card overflow-hidden">
-                <div class="px-6 py-12 text-center text-text-secondary italic">
-                    <i class="ri-loader-4-line animate-spin text-2xl block mb-2"></i>
-                    Cargando lista de usuarios...
-                </div>
-            </div>
         </div>a
     `;
 };
