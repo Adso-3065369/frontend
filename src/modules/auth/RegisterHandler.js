@@ -1,4 +1,4 @@
-import { createRepository } from '@/repositories'; 
+import { createRepository } from '@/repositories';
 import { validateForm, displayFormErrors } from '@/utils';
 import { AuthService } from '@/services';
 import { Navbar } from '@/components/layout/navbar/Navbar.js';
@@ -35,9 +35,9 @@ const submitToServer = async (formData, authRepo, submitBtn, form) => {
         // Si su API requiere un login explícito después del registro, deberá encadenar esa llamada aquí.
         if (payload.accessToken) {
             const { user, accessToken, refreshToken } = payload;
-            
+
             const rawPermissions = (user.roles || []).reduce((acc, role) => acc.concat(role.permissions || []), []);
-            
+
             const sessionData = {
                 id: user.id,
                 fullName: user.name,
@@ -45,7 +45,7 @@ const submitToServer = async (formData, authRepo, submitBtn, form) => {
                 roles: (user.roles || []).map(r => r.name),
                 permissions: [...new Set(rawPermissions)]
             };
-            
+
             AuthService.login(sessionData, accessToken, refreshToken);
         }
 
@@ -53,7 +53,7 @@ const submitToServer = async (formData, authRepo, submitBtn, form) => {
         const navbarContainer = document.getElementById('navbar');
         if (navbarContainer) {
             navbarContainer.innerHTML = Navbar();
-            NavbarController(); 
+            NavbarController();
         }
 
         alert(`¡Registro exitoso! Bienvenido(a) al sistema.`);
@@ -61,7 +61,7 @@ const submitToServer = async (formData, authRepo, submitBtn, form) => {
 
     } catch (error) {
         console.error("[RegisterHandler] Fallo transaccional detectado:", error);
-        
+
         // Reversión visual obligatoria
         submitBtn.innerHTML = originalBtnText;
         submitBtn.disabled = false;
@@ -74,7 +74,7 @@ const submitToServer = async (formData, authRepo, submitBtn, form) => {
         // ESCENARIO IDEAL: DTO Estructurado Estricto
         if (serverErrors && typeof serverErrors === 'object' && !Array.isArray(serverErrors) && Object.keys(serverErrors).length > 0) {
             displayFormErrors(form, serverErrors);
-            return; 
+            return;
         }
 
         // ESCENARIO DE CONTINGENCIA: Mapeo Semántico Dinámico
@@ -102,7 +102,7 @@ const submitToServer = async (formData, authRepo, submitBtn, form) => {
 
 export const RegisterHandler = async () => {
     const form = document.getElementById('form-register');
-    
+
     // 🚀 CORRECCIÓN: Apuntamos al endpoint de autenticación, no al CRUD genérico de usuarios
     // Ajuste la ruta 'auth/register' según la definición exacta de su enrutador Node.js
     const authRepo = createRepository('auth/register');
@@ -121,7 +121,29 @@ export const RegisterHandler = async () => {
             passwordConfirm: { required: true, minLength: 6, message: 'Confirme su contraseña por seguridad.' }
         };
 
+        // Ejecutamos el validador de utils
         let { isValid, errors } = validateForm(formData, rules);
+
+        // se guardan los errores del formulario si se daña o viene vacia esto lo borrar y crea una caja  nueva y limpia con el {} para que el sistema no se trabe ni se rompa 
+        if (!errors || Array.isArray(errors)) { errors = {}; }
+
+        // creamos una lista en blanco llamada error en el cual va a ir anotando en fila los problemas que se encuentre ala hora de validar un registro de usuario 
+        // usando la orden .push() para ir agregando los errores que se vayan encontrando en el formulario de registro de usuario
+        const error = [];
+
+        // el namevalue agarra el nombre que escribio el usuario y le quita los espacios de mas.
+        const nameValue = formData.get('fullName')?.trim() || '';
+        // la expresion  solo_Letras permite que el nombre completo solo contenga letras y espacios, no se permiten numeros ni caracteres especiales.
+        const solo_Letras = /^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$/;
+
+        // hacemos una condicional si el usuario escribe algun numero o caracter especial se congela el envio del  isvalid = false y manda el error en el campo de fullName.
+        if (nameValue !== '' && !solo_Letras.test(nameValue)) {
+            isValid = false;
+            error.push({
+                field: 'fullName',
+                message: 'El nombre completo solo debe contener letras no se permiten numeros ni caracteres especiales.'
+            });
+        }
 
         // Regla de Negocio Local: Coincidencia de Contraseñas
         const password = formData.get('password');
@@ -129,18 +151,22 @@ export const RegisterHandler = async () => {
 
         if (password && passwordConfirm && password !== passwordConfirm) {
             isValid = false;
-            errors.push({
+            error.push({
                 field: 'passwordConfirm',
                 message: 'Las contraseñas ingresadas no coinciden.'
             });
         }
+
+        error.forEach(error => {
+            errors[error.field] = error.message;
+        });
 
         displayFormErrors(form, errors);
 
         if (!isValid) return;
 
         const submitBtn = form.querySelector('button[type="submit"]');
-        
+
         await submitToServer(formData, authRepo, submitBtn, form);
     });
 };
