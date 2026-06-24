@@ -1,4 +1,4 @@
-import { Input, Select, Button, Link } from '@/components/ui';
+import { Input, Select, Button, Link, Label     } from '@/components/ui';
 
 /**
  * @file ProductCreateView.js
@@ -17,7 +17,7 @@ export const ProductCreateView = async () => {
                     
                     <div class="md:col-span-1">
                         ${Input({
-                            label: 'Código SKU',
+                            label: 'Codigo SKU',
                             id: 'productCode',
                             name: 'productCode',
                             placeholder: 'Ej. CAM-OX-001',
@@ -48,6 +48,7 @@ export const ProductCreateView = async () => {
                     </div>
 
                     <div class="md:col-span-1">
+
                         ${Input({
                             label: 'Stock Inicial',
                             type: 'number',
