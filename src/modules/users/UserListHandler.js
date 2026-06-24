@@ -85,52 +85,49 @@ const userColumns = [
 ];
 
 // ============================================================================
-// 2. FASE DE CARGA DE DATOS Y RENDERIZADO DESDE EL SERVIDOR (Server-Side Pagination & Filtering)
+// 2. FASE DE CARGA DE DATOS Y RENDERIZADO DESDE EL SERVIDOR
 // ============================================================================
-// Función asíncrona para obtener los datos del servidor y renderizarlos en la vista
 const loadAndRenderUsers = async (userRepo, tableContainer, page = 1, limit = 10, search = '', role = '') => {
     try {
-        // Formateamos el parámetro de búsqueda de texto si está presente
+        // Construimos de forma dinámica los parámetros de búsqueda de texto y rol
         const searchParam = search ? `&search=${encodeURIComponent(search)}` : '';
-        // Formateamos el parámetro del rol seleccionado si está presente
         const roleParam = role ? `&role=${encodeURIComponent(role)}` : '';
-        // Construimos la cadena de consulta incluyendo la página, el límite y los filtros
+        // Unimos los filtros con los límites de paginación en una sola cadena de consulta
         const queryString = `?page=${page}&limit=${limit}${searchParam}${roleParam}`;
 
-        // Realizamos la petición HTTP GET al repositorio de usuarios pasándole la cadena de consulta
+        // Hacemos el llamado HTTP GET al repositorio de usuarios pasando los parámetros
         const response = await userRepo.getAll(queryString);
         
-        // Extraemos los datos devueltos (adaptando si el payload viene envuelto o directo)
+        // Obtenemos los datos encapsulados en el cuerpo de la respuesta
         const payload = response.data || response;
-        // Obtenemos la lista de usuarios del payload
+        // Extraemos la colección de usuarios devueltos
         const users = payload.data || [];
-        // Obtenemos la metadata de paginación devuelta por el servidor
+        // Extraemos la metadata de la paginación devuelta por el servidor (currentPage, lastPage, etc.)
         const meta = payload.meta || null;
         
-        // Generamos el HTML de la tabla con los usuarios cargados
+        // Generamos el HTML de la tabla con las columnas contractuales y los datos de usuarios
         const tableHtml = DataTable({
             columns: userColumns,
             data: users,
-            // Mostramos un mensaje vacío personalizado dependiendo de si hay filtros activos
-            emptyMessage: (search || role)
-                ? 'No se encontraron usuarios que coincidan con la búsqueda.' 
-                : 'No hay usuarios registrados en el sistema.'
+            emptyMessage: (search || role) 
+                ? 'No se encontraron usuarios bajo esos parámetros.' 
+                : 'El directorio de usuarios está vacío.'
         });
 
-        // Generamos el HTML del componente estandarizado de paginación usando la metadata devuelta
+        // Generamos el HTML del componente estandarizado de paginación inyectándole la metadata
         const paginationHtml = meta ? Pagination({ meta, itemName: 'usuarios' }) : '';
 
-        // Insertamos en el contenedor de la interfaz la tabla combinada con la barra de paginación
+        // Insertamos el HTML combinado de la tabla y la paginación en el contenedor del DOM
         tableContainer.innerHTML = tableHtml + paginationHtml;
         
-        // Retornamos la lista de usuarios renderizada
+        // Retornamos el arreglo de usuarios cargados para mantener el estado en el orquestador
         return users;
     } catch (error) {
-        // En caso de error, lo reportamos en consola y mostramos una tarjeta visual de error
+        // En caso de fallo de comunicación o base de datos, mostramos un aviso al usuario
         console.error("Error al obtener usuarios:", error);
         tableContainer.innerHTML = `
             <div class="p-6 text-center text-red-500 font-bold bg-red-500/10 border border-red-500 m-4 rounded-lg">
-                Fallo de comunicación con el servidor al intentar cargar el directorio de usuarios.
+                Fallo de comunicación con el servidor al intentar cargar el directorio.
             </div>
         `;
         return [];
@@ -138,66 +135,53 @@ const loadAndRenderUsers = async (userRepo, tableContainer, page = 1, limit = 10
 };
 
 // ============================================================================
-// 3. FASE DE SERVIDOR: Eliminación Permanente de Usuario
+// 3. FASE DE SERVIDOR: Eliminación
 // ============================================================================
-// Función asíncrona para eliminar un usuario específico llamando al endpoint del servidor
 const handleDeleteUser = async (btnElement, userRepo, refreshCallback) => {
-    // Obtenemos el ID del usuario almacenado en el atributo data-id del botón clicado
     const id = btnElement.dataset.id;
     
-    // Mostramos una alerta de confirmación nativa del navegador antes de proceder
     if (!confirm('ADVERTENCIA: ¿Confirma la eliminación permanente de este usuario del sistema?')) {
         return; 
     }
         
-    // Guardamos el contenido HTML original del botón para poder restaurarlo si la operación falla
     const originalContent = btnElement.innerHTML;
-    // Cambiamos el contenido del botón para mostrar un icono de carga/animación
     btnElement.innerHTML = '<i class="ri-loader-4-line animate-spin"></i>';
-    // Deshabilitamos el botón para evitar doble envío accidental
     btnElement.disabled = true;
 
     try {
-        // Invocamos al método delete del repositorio para despachar la petición DELETE al servidor
         await userRepo.delete(id);
-        // Refrescamos la vista llamando a la función callback
         await refreshCallback(); 
     } catch (error) {
-        // Capturamos cualquier error devuelto por la petición
         console.error(`Error transaccional al eliminar usuario ${id}:`, error);
         
-        // Extraemos el mensaje de error del payload de respuesta o usamos un mensaje genérico
         const errorMessage = error.response?.data?.message || error.message || "Fallo transaccional de servidor.";
-        // Mostramos el mensaje de error al usuario mediante un alert
         alert(`Operación rechazada:\n${errorMessage}`);
         
-        // Restauramos el contenido original y habilitamos nuevamente el botón
         btnElement.innerHTML = originalContent;
         btnElement.disabled = false;
     }
 };
 
 // ============================================================================
-// 4. ORQUESTADOR PRINCIPAL: Delegación de Eventos y Manejo del Estado
+// 4. ORQUESTADOR PRINCIPAL: Delegación y Estado
 // ============================================================================
-// Función controladora principal exportada para iniciar el listado de usuarios
 export const UserListHandler = async () => {
-    // Instanciamos el repositorio transaccional para la entidad de usuarios
+    // Instanciamos el repositorio transaccional para la entidad 'users'
     const userRepo = createRepository('users');
-    // Obtenemos la referencia del contenedor de la interfaz de la tabla de usuarios en el DOM
+    // Obtenemos el elemento contenedor donde se renderizará el listado de usuarios
     const tableContainer = document.getElementById('users-table-container');
 
-    // Validación de seguridad por si el contenedor no existe en el DOM actual
+    // Salida temprana si el contenedor no existe en la vista actual
     if (!tableContainer) return;
 
-    // Declaramos variables de control de estado locales
+    // Declaramos variables de estado locales para la vista de usuarios
     let currentUsers = [];
     let currentPage = 1;
     const itemsPerPage = 10;
-    let currentSearchTerm = ''; 
+    let currentSearchTerm = '';
     let currentRole = '';
 
-    // Función callback local para recargar la vista llamando a la carga paginada del servidor
+    // Función auxiliar para refrescar el contenido llamando a la carga paginada
     const refreshView = async () => {
         currentUsers = await loadAndRenderUsers(
             userRepo, 
@@ -209,53 +193,51 @@ export const UserListHandler = async () => {
         );
     };
 
-    // Suscribirse al evento personalizado de filtros cambiados
-    // Primero removemos cualquier escuchador anterior registrado en window para evitar duplicados
+    // Removemos suscripciones previas para evitar llamadas duplicadas por cambios de enrutador
     if (window.userFiltersChangedListener) {
         document.removeEventListener('user-filters-changed', window.userFiltersChangedListener);
     }
 
-    // Definimos el manejador del evento de cambio de filtros
+    // Definimos el callback cuando cambien los inputs del filtro
     window.userFiltersChangedListener = async (e) => {
-        // Extraemos los nuevos valores de búsqueda de texto y rol seleccionados
+        // Extraemos las nuevas opciones de filtro desde el detalle del evento
         const { searchTerm, roleName } = e.detail;
-        // Actualizamos las variables de estado correspondientes
         currentSearchTerm = searchTerm;
         currentRole = roleName;
-        // Reiniciamos el cursor de paginación a la página 1 cuando se realiza un nuevo filtrado
+        // Reiniciamos la visualización a la página uno al realizar una nueva búsqueda
         currentPage = 1;
-        // Invocamos la actualización de la vista para realizar la consulta al servidor
+        // Refrescamos la vista con los nuevos datos filtrados
         await refreshView();
     };
 
-    // Registramos el escuchador en el documento
+    // Escuchamos el evento de cambio de filtros lanzado desde la interfaz
     document.addEventListener('user-filters-changed', window.userFiltersChangedListener);
 
-    // Ejecutamos la carga inicial al arrancar el controlador
+    // Ejecutamos la carga inicial de datos paginados al entrar a la sección
     await refreshView();
 
-    // Registramos un manejador de eventos click por delegación sobre el contenedor de la tabla
+    // Registramos un manejador de eventos click por delegación dentro del contenedor de la tabla
     tableContainer.addEventListener('click', async (e) => {
-        // Evaluamos si el clic ocurrió sobre un botón de paginación
+        // Identificamos si se hizo click en un botón de navegación de página
         const btnPaginate = e.target.closest('button[data-action="paginate"]');
         if (btnPaginate && !btnPaginate.disabled) {
-            // Extraemos la página objetivo almacenada en el dataset
+            // Convertimos a entero el número de página guardado en el dataset del botón
             const newPage = parseInt(btnPaginate.dataset.page, 10);
             if (!isNaN(newPage)) {
-                // Actualizamos la página actual
+                // Actualizamos la página activa del estado
                 currentPage = newPage;
-                // Recargamos la vista de usuarios
+                // Cargamos y mostramos la página de datos correspondiente
                 await refreshView();
             }
             return;
         }
         
-        // Evaluamos si el clic ocurrió sobre un botón de eliminación permanente
+        // Identificamos si se hizo click en un botón de eliminación de usuario
         const btnDelete = e.target.closest('button[data-action="delete"]');
-        if (btnDelete && !btnDelete.disabled) {
-            // Despachamos la lógica de eliminación pasándole la referencia del botón, el repo y la función de refresco
+        if (btnDelete) {
+            // Ejecutamos la lógica transaccional de borrado y actualizamos al terminar
             await handleDeleteUser(btnDelete, userRepo, refreshView);
             return;
         }
     });
-};
+};
