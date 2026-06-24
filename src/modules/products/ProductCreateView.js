@@ -16,11 +16,8 @@ export const ProductCreateView = async () => {
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     
                     <div class="md:col-span-1">
-                        ${Label({
-                            text: 'Código SKU',
-                            htmlFor: 'productCode'
-                        })}
                         ${Input({
+                            label: 'Codigo SKU',
                             id: 'productCode',
                             name: 'productCode',
                             placeholder: 'Ej. CAM-OX-001',
@@ -29,11 +26,8 @@ export const ProductCreateView = async () => {
                     </div>
 
                     <div class="md:col-span-1">
-                        ${Label({
-                            text: 'Nombre del Producto',
-                            htmlFor: 'productName'
-                        })}
                         ${Input({
+                            label: 'Nombre del Producto',
                             id: 'productName',
                             name: 'productName',
                             placeholder: 'Ej. Camisa Oxford Slim Fit',
@@ -42,11 +36,8 @@ export const ProductCreateView = async () => {
                     </div>
 
                     <div class="md:col-span-1">
-                        ${Label({
-                            text: 'Precio Unitario ($)',
-                            htmlFor: 'productName'
-                        })}
                         ${Input({
+                            label: 'Precio Unitario ($)',
                             type: 'number',
                             id: 'productPrice',
                             name: 'productPrice',
@@ -57,11 +48,9 @@ export const ProductCreateView = async () => {
                     </div>
 
                     <div class="md:col-span-1">
-                        ${Label({
-                            text: 'Stock Inicial',
-                            htmlFor: 'productName'
-                        })}
+
                         ${Input({
+                            label: 'Stock Inicial',
                             type: 'number',
                             id: 'productStock',
                             name: 'productStock',
