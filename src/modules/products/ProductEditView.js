@@ -1,4 +1,4 @@
-import { Input, Select, Button, Link } from '@/components/ui';
+import { Input, Select, Button, Link} from '@/components/ui';
 
 /**
  * @file ProductEditView.js
