@@ -8,12 +8,15 @@ import { filterUsers } from '@/utils/filterUsers.js';
  * @description Interfaz de gestión de usuarios ajustada al patrón de componentes dinámicos.
  */
 export const UserListView = async () => {
-    // Callback que recibe los valores de filtro y realiza el filtrado en memoria usando la utilidad.
+    // Instanciamos el componente de Filtro pasándole una función callback que se ejecuta al escribir o cambiar de rol.
+    // En lugar de filtrar en memoria localmente, notificamos los nuevos valores mediante un evento personalizado para que el orquestador los recargue desde el servidor.
     const filterHtml = UserFilter((searchTerm, roleName) => {
-        const filteredUsers = filterUsers(window.allUsers || [], searchTerm, roleName);
-        const event = new CustomEvent('user-list-updated', {
-            detail: { filteredUsers }
+        // Creamos un evento personalizado llamado 'user-filters-changed'
+        const event = new CustomEvent('user-filters-changed', {
+            // Adjuntamos en el detalle los nuevos criterios de filtrado seleccionados por el usuario
+            detail: { searchTerm, roleName }
         });
+        // Despachamos el evento a nivel de documento para que el controlador lo intercepte y actúe en consecuencia
         document.dispatchEvent(event);
     });
 
