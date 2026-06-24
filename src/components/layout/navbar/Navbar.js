@@ -125,6 +125,11 @@ export const Navbar = () => {
                 </div>
                 
                 <div id="auth-section" class="flex items-center gap-4">
+                    <!-- boton para abrir el menu en moviles -->
+                    <button id="mobile-menu-trigger" class="md:hidden p-2 text-gray-400">
+                        <i class="ri-menu-line text-2xl"></i>
+                    </button>
+
                     ${isAuth 
                         ? userMenuHtml 
                         : `
@@ -143,6 +148,33 @@ export const Navbar = () => {
                 </div>
                 
             </nav>
+
+            <!-- menu movil que aparece al presionar la hamburguesa -->
+            <div id="mobile-navigation" class="hidden md:hidden border-t border-gray-800 bg-bg-surface">
+                <div class="flex flex-col p-4 gap-2">
+                    ${RenderIf('dashboard.index', 
+                        Link({ text: 'Dashboard', href: '#/dashboard', variant: 'nav' })
+                    )}
+                    ${RenderIf('users.index',
+                        Link({ text: 'Usuarios', href: '#/usuarios', variant: 'nav' })
+                    )}
+                    ${RenderIf('clients.index',
+                        Link({ text: 'Clientes', href: '#/clientes', variant: 'nav' })
+                    )}
+                    ${RenderIf('roles.index',
+                        Link({ text: 'Roles', href: '#/roles', variant: 'nav' })
+                    )}
+                    ${RenderIf('products.index',
+                        Link({ text: 'Productos', href: '#/productos', variant: 'nav' })
+                    )}
+                    ${RenderIf('categories.index',
+                        Link({ text: 'Categorías', href: '#/categorias', variant: 'nav' })
+                    )}
+                    ${RenderIf('sales.index',
+                        Link({ text: 'Ventas', href: '#/ventas', variant: 'nav' })
+                    )}
+                </div>
+            </div>
         </header>
     `;
 };
