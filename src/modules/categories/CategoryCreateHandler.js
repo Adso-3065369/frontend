@@ -71,16 +71,26 @@ export const CategoryCreateHandler = async () => {
             categoryName: {
                 required: true,
                 minLength: 3,
+                //se aplica una regla para validar, que el nombre de la categoria no este vacio, no empiece con numeros o espacios, y que almenos cuente con 3 nnumero o letras, para evitar que se creen ccategorias con nombres invalido o vacios
+                pattern: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ][a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]*$/,
+                //para asegurarnos que funcione, debemos validar en el archivo utlis-index.js
+                patternMessage: 'El nombre de la categoria debe comenzar con una letra y puede incluir numeros y espacios',
                 message: 'El nombre de la categoría es obligatorio y debe tener al menos 3 caracteres.'
             }
         };
 
         // Ejecutar el motor de validación
         const { isValid, errors } = validateForm(formData, rules);
-        displayFormErrors(form, errors);
+      displayFormErrors(form, errors);
+      
+      console.log("es valido el formulario", isValid);
+      console.log("errores detectados", errors);
+      
 
         // Control fail-fast: Interceptar el flujo si el formulario no cumple las reglas
-        if (!isValid) return;
+      if (!isValid) return;
+      
+
 
         // Delegación de la petición a la fase de servidor
         const submitBtn = form.querySelector('button[type="submit"]');
