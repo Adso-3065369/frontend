@@ -163,7 +163,7 @@ export function Input({
 
   // ─── Bloque 6: Retorno de HTML condicional ────────────────────────────────
   const labelHTML = label
-    ? `<label ${id ? `for="${id}"` : ""} class="block text-sm font-medium text-text-secondary mb-1">
+    ? `<label ${id ? `for="${id}"` : ""} class="block text-sm font-medium text-text-primary mb-1">
         ${label}${required ? ' <span class="text-red-500">*</span>' : ""}
       </label>`
     : "";
