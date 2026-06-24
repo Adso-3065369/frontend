@@ -36,8 +36,8 @@ const categoryColumns = [
         }
     },
     {
-        header: 'Acciones',
-        accessor: 'actions',
+        header: 'Acciones', 
+        accessor: 'actions', 
         render: (category) => `
             <div class="flex items-center justify-end gap-2">
                 ${RenderIf('categories.update',
@@ -47,17 +47,17 @@ const categoryColumns = [
                         size: 'sm',
                         icon: '<i class="ri-pencil-line"></i>',
                         className: 'justify-center w-8 h-8 p-0',
-                        title: 'Modificar Categoría'
+                        title: 'Modificar la Categoría'
                     })
                 )}
-                ${RenderIf('categories.delete',
-                    Button({
-                        variant: 'danger',
+                ${RenderIf('categories.delete', // esta es el proceso en el que se desplega el mensaje
+                    Button({ 
+                        variant: 'danger', 
                         icon: '<i class="ri-delete-bin-line"></i>',
                         className: 'w-8 h-8 p-0 flex items-center justify-center',
-                        title: category.has_products ? 'No se puede eliminar (Tiene productos)' : 'Eliminar Categoría',
-                        disabled: category.has_products,
-                        dataset: { action: 'delete', id: category.id }
+                        title: category.has_products ? 'No se puede eliminar porque tiene productos' : 'Eliminar la Categoría', //cuando se vaya a eliminar se desplega
+                        disabled: category.has_products, // se declara que tiene productos vinculados
+                        dataset: { action: 'delete', id: category.id } // la accion
                     })
                 )}
             </div>
