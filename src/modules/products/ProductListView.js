@@ -8,6 +8,7 @@ import { RenderIf } from '@/utils';
 export const ProductListView = async () => {
     return `
         <div class="p-6 space-y-6">
+            <!-- Cabecera y Botón Nuevo -->
             <div class="sm:flex sm:items-center sm:justify-between">
                 <div>
                     <h1 class="text-2xl font-black text-white">Catálogo de Productos</h1>
@@ -25,6 +26,19 @@ export const ProductListView = async () => {
                 </div>
             </div>
 
+            <!-- Contenedor de Búsqueda -->
+            <div class="bg-app-card border border-brand/20 p-4 rounded-lg flex items-center gap-3">
+                <i class="ri-search-line text-text-secondary text-xl"></i>
+                <input 
+                    type="text" 
+                    id="search-product-input" 
+                    placeholder="Buscar producto por nombre..." 
+                    class="w-full bg-transparent border-none text-white focus:ring-0 placeholder:text-text-secondary outline-none"
+                    autocomplete="off"
+                >
+            </div>
+
+            <!-- Contenedor de Tabla -->
             <div id="products-table-container" class="app-card overflow-hidden">
                 <div class="px-6 py-12 text-center text-text-secondary italic">
                     <i class="ri-loader-4-line animate-spin text-2xl block mb-2"></i>
