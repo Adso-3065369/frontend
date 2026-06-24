@@ -17,12 +17,10 @@ export const ProfileView = async () => {
                     <p class="mt-2 text-sm text-text-secondary">Administre su perfil.</p>
                 </div>
             </div>
-
-            ${profileCard()}
-
-            <div id="user-card" class="flex justify-between items-center bg-[var(--bg-surface)] rounded-md app-card overflow-hidden h-50 w-150 p-10">
-                
-            </div>
+            ${Card({
+                id: 'profile-card',
+                className:'flex-row gap-5 items-center px-5 py-10 justify-between'
+            })}
             <div id="users-table-container" class="app-card overflow-hidden">
                 <div class="px-6 py-12 text-center text-text-secondary italic">
                     <i class="ri-loader-4-line animate-spin text-2xl block mb-2"></i>
