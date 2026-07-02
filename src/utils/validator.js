@@ -9,12 +9,10 @@ export const validateForm = (formData, rules) => {
     const errors = {};
 
     Object.entries(rules).forEach(([fieldName, rule]) => {
-        const values = formData.getAll(fieldName); 
-        const value = values.length > 1 ? values : values[0]; 
-        
-        const isEmpty = !value || 
-                        (typeof value === 'string' && value.trim() === '') || 
-                        (Array.isArray(values) && values.length === 0);
+        const values = formData.get(fieldName);
+        const value = values !== null ? String(values).trim() : '';
+
+        const isEmpty = value === '';
 
         // 1. Regla: Requerido (Frena la evaluación si el campo obligatorio está vacío)
         if (rule.required && isEmpty) {
@@ -26,10 +24,18 @@ export const validateForm = (formData, rules) => {
         // Si el campo opcional está vacío, no se evalúan las restricciones de formato
         if (isEmpty) return;
 
+
+
         // 2. Regla: Longitud Mínima
         if (rule.minLength && typeof value === 'string' && value.trim().length < rule.minLength) {
             isValid = false;
-            errors[fieldName] = rule.minLengthMessage || rule.message || `Debe contener al menos ${rule.minLength} caracteres.`;
+            errors[fieldName] = rule.minLengthMessage || rule.message || `Debe contener al menos ${rule.minLength} digitos.`;
+            return;
+        }
+
+        if (rule.maxLength && typeof value === 'string' && value.trim().length > rule.maxLength) {
+            isValid = false;
+            errors[fieldName] = rule.maxLengthMessage || rule.message || `Debe contener como máximo ${rule.maxLength} digitos.`;
             return;
         }
 
@@ -75,4 +81,33 @@ export const displayFormErrors = (form, errors = {}) => {
             firstInput.insertAdjacentElement('afterend', errorNode);
         }
     });
+};
+
+export const clientRules = {
+    document_number: {
+        required: true,
+        minLength: 7,
+        minLengthMessage: 'El documento debe tener mínimo 7 dígitos.',
+        maxLength: 10,
+        maxLengthMessage: 'El documento debe tener máximo 10 dígitos.',
+        pattern: /^[0-9]+$/,
+        patternMessage: 'El documento debe contener exclusivamente números.'
+    },
+    name: {
+        required: true,
+        minLength: 3,
+        minLengthMessage: 'El nombre debe tener mínimo 3 caracteres.',
+        pattern: /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]+$/,
+        patternMessage: 'El nombre solo debe contener letras.'
+    },
+    email: {
+        required: true,
+        pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+        patternMessage: 'Ingrese un formato de correo válido (ejemplo@gmail.com).'
+    },
+    phone: {
+        required: true,
+        pattern: /^[0-9]{10}$/,
+        patternMessage: 'El teléfono solo debe contener 10 dígitos.'
+    }
 };
