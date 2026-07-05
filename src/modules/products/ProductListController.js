@@ -50,7 +50,7 @@ const productColumns = [
         header: 'Estado',
         accessor: 'isActive',
         render: (product) => {
-            const isCurrentlyActive = product.isActive !== false; 
+            const isCurrentlyActive = Number(product.isActive) !== 0; 
             return Badge({
                 text: isCurrentlyActive ? 'Activo' : 'Inactivo',
                 variant: isCurrentlyActive ? 'success' : 'danger'
@@ -61,7 +61,7 @@ const productColumns = [
         header: 'Acciones',
         accessor: 'actions',
         render: (product) => {
-            const isCurrentlyActive = product.isActive !== false;
+            const isCurrentlyActive = Number(product.isActive) !== 0;
             
             return `
                 <div class="flex items-center justify-end gap-2">
@@ -145,7 +145,7 @@ const handleToggleStatus = async (btnElement, currentProducts, productRepo, refr
     const productToToggle = currentProducts.find(p => String(p.id) === String(id));
     if (!productToToggle) return;
 
-    const isCurrentlyActive = productToToggle.isActive !== false;
+    const isCurrentlyActive = Number(productToToggle.isActive) !== 0;
     const newStatus = !isCurrentlyActive;
     
     if (!confirm(`¿Está seguro de que desea ${isCurrentlyActive ? 'desactivar' : 'activar'} el producto "${productToToggle.name}"?`)) return;
