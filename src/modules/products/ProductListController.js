@@ -146,28 +146,23 @@ const handleToggleStatus = async (btnElement, currentProducts, productRepo, refr
     if (!productToToggle) return;
 
     const isCurrentlyActive = productToToggle.isActive !== false;
+    const newStatus = !isCurrentlyActive;
     
     if (!confirm(`¿Está seguro de que desea ${isCurrentlyActive ? 'desactivar' : 'activar'} el producto "${productToToggle.name}"?`)) return;
-        
+
+    const originalContent = btnElement.innerHTML;
     btnElement.disabled = true;
     btnElement.innerHTML = '<span class="animate-pulse">...</span>';
 
     try {
-        const updatedProductPayload = {
-            code: productToToggle.code,
-            name: productToToggle.name,
-            price: parseFloat(productToToggle.price),
-            stock: parseInt(productToToggle.stock, 10),
-            category_id: parseInt(productToToggle.category_id || productToToggle.categoryId, 10),
-            isActive: !isCurrentlyActive
-        };
-
-        await productRepo.update(id, updatedProductPayload);
-        await refreshCallback(); 
+        await productRepo.updateStatus(id, { isActive: newStatus });
+        alert(`Producto ${newStatus ? 'activado' : 'desactivado'} exitosamente.`);
+        await refreshCallback();
     } catch (error) {
         console.error(error);
-        alert(error.message || "Error al actualizar el estado.");
-        await refreshCallback();
+        alert(error.response?.data?.message || error.message || "Error al actualizar el estado.");
+        btnElement.disabled = false;
+        btnElement.innerHTML = originalContent;
     }
 };
 
