@@ -15,6 +15,7 @@
  * @returns {string} Cadena de HTML válida que representa el componente Input.
  */
 export function Input({
+  id          = "",
   name        = "",
   type        = "text",
   placeholder = "",
@@ -156,6 +157,7 @@ export function Input({
   // ─── Bloque 6: Retorno de HTML condicional ────────────────────────────────
   return `
     <input
+      ${id ? `id="${id}"` : ""}
       type="${type}"
       name="${name}"
       placeholder="${placeholder}"
