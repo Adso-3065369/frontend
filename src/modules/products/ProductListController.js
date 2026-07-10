@@ -50,7 +50,7 @@ const productColumns = [
         header: 'Estado',
         accessor: 'isActive',
         render: (product) => {
-            const isCurrentlyActive = product.isActive !== false; 
+            const isCurrentlyActive = Number(product.isActive) !== 0; 
             return Badge({
                 text: isCurrentlyActive ? 'Activo' : 'Inactivo',
                 variant: isCurrentlyActive ? 'success' : 'danger'
@@ -61,7 +61,7 @@ const productColumns = [
         header: 'Acciones',
         accessor: 'actions',
         render: (product) => {
-            const isCurrentlyActive = product.isActive !== false;
+            const isCurrentlyActive = Number(product.isActive) !== 0;
             
             return `
                 <div class="flex items-center justify-end gap-2">
@@ -145,29 +145,24 @@ const handleToggleStatus = async (btnElement, currentProducts, productRepo, refr
     const productToToggle = currentProducts.find(p => String(p.id) === String(id));
     if (!productToToggle) return;
 
-    const isCurrentlyActive = productToToggle.isActive !== false;
+    const isCurrentlyActive = Number(productToToggle.isActive) !== 0;
+    const newStatus = !isCurrentlyActive;
     
     if (!confirm(`¿Está seguro de que desea ${isCurrentlyActive ? 'desactivar' : 'activar'} el producto "${productToToggle.name}"?`)) return;
-        
+
+    const originalContent = btnElement.innerHTML;
     btnElement.disabled = true;
     btnElement.innerHTML = '<span class="animate-pulse">...</span>';
 
     try {
-        const updatedProductPayload = {
-            code: productToToggle.code,
-            name: productToToggle.name,
-            price: parseFloat(productToToggle.price),
-            stock: parseInt(productToToggle.stock, 10),
-            category_id: parseInt(productToToggle.category_id || productToToggle.categoryId, 10),
-            isActive: !isCurrentlyActive
-        };
-
-        await productRepo.update(id, updatedProductPayload);
-        await refreshCallback(); 
+        await productRepo.updateStatus(id, { isActive: newStatus });
+        alert(`Producto ${newStatus ? 'activado' : 'desactivado'} exitosamente.`);
+        await refreshCallback();
     } catch (error) {
         console.error(error);
-        alert(error.message || "Error al actualizar el estado.");
-        await refreshCallback();
+        alert(error.response?.data?.message || error.message || "Error al actualizar el estado.");
+        btnElement.disabled = false;
+        btnElement.innerHTML = originalContent;
     }
 };
 
