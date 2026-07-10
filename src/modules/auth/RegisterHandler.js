@@ -145,6 +145,29 @@ export const RegisterHandler = async () => {
             });
         }
 
+        // =======================================================================
+        //  RESTRICCIONES DE CORREO ELECTRÓNICO
+        // =======================================================================
+        const emailValue = formData.get('email')?.trim() || '';
+        const regexEmailEstricto = /^[^0-9][a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+        if (emailValue !== '') {
+            if (/^[0-9]/.test(emailValue)) {
+                isValid = false;
+                error.push({
+                    field: 'email',
+                    message: 'El correo electrónico no puede iniciar con números.'
+                });
+            } else if (!regexEmailEstricto.test(emailValue)) {
+                isValid = false;
+                error.push({
+                    field: 'email',
+                    message: 'Ingrese un formato de correo válido (ejemplo: usuario@dominio.com).'
+                });
+            }
+        }
+        // =======================================================================
+
         // Regla de Negocio Local: Coincidencia de Contraseñas
         const password = formData.get('password');
         const passwordConfirm = formData.get('passwordConfirm');
