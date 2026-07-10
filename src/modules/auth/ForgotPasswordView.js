@@ -7,7 +7,7 @@ import { Button, Input, Label } from '@/components/ui';
  * El usuario ingresa su correo y el sistema simula el envío de un enlace.
  */
 export const ForgotPasswordView = async () => {
-    return `
+    return `+
         <section class="min-h-[80vh] flex items-center justify-center px-4 py-12">
             <div class="max-w-md w-full bg-bg-surface p-10 rounded-2xl shadow-xl border border-gray-800">
 

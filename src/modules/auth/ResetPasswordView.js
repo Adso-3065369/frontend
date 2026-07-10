@@ -57,24 +57,34 @@ export const ResetPasswordView = async () => {
 
                     <div class="space-y-2">
                         ${Label({ text: 'Nueva contraseña', htmlFor: 'newPassword' })}
-                        ${Input({
-                            type: 'password',
-                            id: 'newPassword',
-                            name: 'newPassword',
-                            placeholder: '••••••••',
-                            className: 'border-gray-700 focus:border-brand text-white'
-                        })}
+                        <div class="relative">
+                            ${Input({
+                                type: 'password',
+                                id: 'newPassword',
+                                name: 'newPassword',
+                                placeholder: '••••••••',
+                                className: 'border-gray-700 focus:border-brand text-white pr-10'
+                            })}
+                            <button type="button" class="toggle-password absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-all cursor-pointer" data-target="newPassword">
+                                <i class="ri-eye-line text-lg"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="space-y-2">
                         ${Label({ text: 'Confirmar contraseña', htmlFor: 'confirmPassword' })}
-                        ${Input({
-                            type: 'password',
-                            id: 'confirmPassword',
-                            name: 'confirmPassword',
-                            placeholder: '••••••••',
-                            className: 'border-gray-700 focus:border-brand text-white'
-                        })}
+                        <div class="relative">
+                            ${Input({
+                                type: 'password',
+                                id: 'confirmPassword',
+                                name: 'confirmPassword',
+                                placeholder: '••••••••',
+                                className: 'border-gray-700 focus:border-brand text-white pr-10'
+                            })}
+                            <button type="button" class="toggle-password absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-all cursor-pointer" data-target="confirmPassword">
+                                <i class="ri-eye-line text-lg"></i>
+                            </button>
+                        </div>
                     </div>
 
                     ${Button({

@@ -1,20 +1,40 @@
+import { createRepository } from '@/repositories';
 import { validateForm, displayFormErrors } from '@/utils';
 
 /**
  * @file ResetPasswordHandler.js
  * @version 1.0.0
- * @description Handler para restablecer la contraseña (simulado).
- * Valida que las contraseñas coincidan, simula la petición al backend
- * y redirige al login.
- * TODO: Reemplazar el bloque simulado por la llamada real:
- * const repo = createRepository('auth/reset-password');
- * await repo.create({ token, newPassword, confirmPassword });
+ * @description Handler para restablecer la contraseña.
+ * Valida que las contraseñas coincidan y hace la petición real al backend.
  */
 export const ResetPasswordHandler = async () => {
     const form = document.getElementById('form-reset-password');
     const successBox = document.getElementById('success-reset');
+    const repo = createRepository('auth/reset-password');
 
     if (!form) return;
+
+    // Manejar la visualización de la contraseña (Ojo)
+    const toggleButtons = form.querySelectorAll('.toggle-password');
+    toggleButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetId = btn.getAttribute('data-target');
+            const input = document.getElementById(targetId);
+            const icon = btn.querySelector('i');
+
+            if (input && icon) {
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('ri-eye-line');
+                    icon.classList.add('ri-eye-off-line');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('ri-eye-off-line');
+                    icon.classList.add('ri-eye-line');
+                }
+            }
+        });
+    });
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -23,16 +43,16 @@ export const ResetPasswordHandler = async () => {
         const newPassword = formData.get('newPassword')?.trim() ?? '';
         const confirmPassword = formData.get('confirmPassword')?.trim() ?? '';
 
-        // Validación de campos individuales
+        // Reglas de validación visual del frontend
         const rules = {
             newPassword: {
                 required: true,
-                minLength: 6,
-                message: 'La contraseña debe tener al menos 6 caracteres.'
+                minLength: 8,
+                message: 'La contraseña debe tener al menos 8 caracteres.'
             },
             confirmPassword: {
                 required: true,
-                minLength: 6,
+                minLength: 8,
                 message: 'Confirme su contraseña.'
             }
         };
@@ -55,25 +75,38 @@ export const ResetPasswordHandler = async () => {
         submitBtn.innerHTML = '<span class="animate-pulse"><i class="ri-loader-4-line animate-spin"></i> Procesando...</span>';
         submitBtn.disabled = true;
 
-        // ─── SIMULACIÓN ────────────────────────────────────────────────────────
-        // TODO: Reemplazar por la llamada real al backend cuando esté disponible:
-        // const token = formData.get('token');
-        // const repo = createRepository('auth/reset-password');
-        // await repo.create({ token, newPassword, confirmPassword });
-        await new Promise(resolve => setTimeout(resolve, 1200));
-        // ───────────────────────────────────────────────────────────────────────
+        // Obtener el token desde el hash de la URL
+        const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
+        const token = urlParams.get('token') || '';
 
-        // Ocultar formulario y mostrar éxito
-        form.classList.add('hidden');
-        if (successBox) successBox.classList.remove('hidden');
+        try {
+            // Llamada real al backend enviando el token y la nueva contraseña
+            await repo.create({ token, password: newPassword });
 
-        // Restaurar botón
-        submitBtn.innerHTML = originalBtnText;
-        submitBtn.disabled = false;
+            // Ocultar formulario y mostrar éxito
+            form.classList.add('hidden');
+            if (successBox) successBox.classList.remove('hidden');
 
-        // Redirigir al login después de 2 segundos
-        setTimeout(() => {
-            window.location.hash = '#/login';
-        }, 2000);
+            // Redirigir al login después de 2.5 segundos
+            setTimeout(() => {
+                window.location.hash = '#/login';
+            }, 2500);
+
+        } catch (error) {
+            console.error("[ResetPassword] Error al cambiar la contraseña:", error);
+            const serverMessage = error.response?.data?.message || 'Token inválido o expirado.';
+            const serverErrors = error.response?.data?.errors;
+
+            if (serverErrors && typeof serverErrors === 'object') {
+                // Si el backend arrojó errores específicos de Zod (ej. contraseña débil)
+                displayFormErrors(form, { newPassword: serverErrors.password || serverMessage });
+            } else {
+                displayFormErrors(form, { newPassword: serverMessage });
+            }
+        } finally {
+            // Restaurar botón
+            submitBtn.innerHTML = originalBtnText;
+            submitBtn.disabled = false;
+        }
     });
 };

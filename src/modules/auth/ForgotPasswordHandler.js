@@ -1,16 +1,16 @@
+import { createRepository } from '@/repositories';
 import { validateForm, displayFormErrors } from '@/utils';
 
 /**
  * @file ForgotPasswordHandler.js
  * @version 1.0.0
- * @description Handler de recuperación de contraseña (simulado).
- * Valida el correo y muestra el mensaje de éxito en pantalla.
- * Cuando el backend esté listo, reemplazar el bloque simulado
- * por: await repo.create({ email }) usando el endpoint /auth/forgot-password
+ * @description Handler de recuperación de contraseña.
+ * Valida el correo, envía la petición al backend y muestra el mensaje de éxito.
  */
 export const ForgotPasswordHandler = async () => {
     const form = document.getElementById('form-forgot-password');
     const successMessage = document.getElementById('success-message');
+    const repo = createRepository('auth/forgot-password');
 
     if (!form) return;
 
@@ -39,19 +39,21 @@ export const ForgotPasswordHandler = async () => {
         submitBtn.innerHTML = '<span class="animate-pulse"><i class="ri-loader-4-line animate-spin"></i> Enviando...</span>';
         submitBtn.disabled = true;
 
-        // ─── SIMULACIÓN ────────────────────────────────────────────────────────
-        // TODO: Reemplazar por la llamada real al backend cuando esté disponible:
-        // const repo = createRepository('auth/forgot-password');
-        // await repo.create({ email: formData.get('email').trim() });
-        await new Promise(resolve => setTimeout(resolve, 1200));
-        // ───────────────────────────────────────────────────────────────────────
+        try {
+            // Realizar llamada al backend
+            await repo.create({ email: formData.get('email').trim() });
 
-        // Ocultar el formulario y mostrar confirmación
-        form.classList.add('hidden');
-        successMessage.classList.remove('hidden');
-
-        // Restaurar botón (por si el usuario hace back)
-        submitBtn.innerHTML = originalBtnText;
-        submitBtn.disabled = false;
+            // Ocultar el formulario y mostrar confirmación
+            form.classList.add('hidden');
+            successMessage.classList.remove('hidden');
+        } catch (error) {
+            console.error("[ForgotPassword] Fallo al enviar recuperación:", error);
+            const serverMessage = error.response?.data?.message || 'Error de conexión. Intente nuevamente.';
+            displayFormErrors(form, { email: serverMessage });
+        } finally {
+            // Restaurar botón
+            submitBtn.innerHTML = originalBtnText;
+            submitBtn.disabled = false;
+        }
     });
 };
