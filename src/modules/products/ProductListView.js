@@ -32,7 +32,7 @@ export const ProductListView = async () => {
                 <input 
                     type="text" 
                     id="search-product-input" 
-                    placeholder="Buscar producto por nombre..." 
+                    placeholder="Busca un producto por su nombre" 
                     class="w-full bg-transparent border-none text-white focus:ring-0 placeholder:text-text-secondary outline-none"
                     autocomplete="off"
                 >
