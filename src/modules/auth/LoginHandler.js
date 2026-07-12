@@ -95,10 +95,28 @@ export const LoginHandler = async () => {
 
     if (!form) return;
 
+    // Toggle visibilidad de contraseña
+    const toggleBtn = document.getElementById('toggle-login-password');
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            const input = document.getElementById('password');
+            const icon = toggleBtn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('ri-eye-line', 'ri-eye-off-line');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('ri-eye-off-line', 'ri-eye-line');
+            }
+        });
+    }
+
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const formData = new FormData(form);
+
 
         const rules = {
             email: {

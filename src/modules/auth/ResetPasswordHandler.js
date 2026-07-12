@@ -48,7 +48,9 @@ export const ResetPasswordHandler = async () => {
             newPassword: {
                 required: true,
                 minLength: 8,
-                message: 'La contraseña debe tener al menos 8 caracteres.'
+                isStrongPassword: true,
+                minLengthMessage: 'La contraseña debe tener al menos 8 caracteres.',
+                strongMessage: 'La contraseña debe contener al menos una mayúscula (A-Z), una minúscula (a-z) y un número (0-9).'
             },
             confirmPassword: {
                 required: true,

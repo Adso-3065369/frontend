@@ -15,6 +15,7 @@
  * @returns {string} Cadena de HTML válida que representa el componente Input.
  */
 export function Input({
+  id          = "",
   name        = "",
   type        = "text",
   placeholder = "",
@@ -23,6 +24,7 @@ export function Input({
   hasError    = false,
   disabled    = false,
   dataset     = {},
+  className   = "",
 } = {}) {
 
   // ─── Bloque 1: Base Classes ───────────────────────────────────────────────
@@ -134,6 +136,9 @@ export function Input({
     lg: "px-4   py-3   text-lg",
   };
 
+  const idAttr = id ? `id="${id}"` : '';
+  const extraClasses = className || '';
+
   // ─── Bloque 4: Final Classes ──────────────────────────────────────────────
   const errorClasses = hasError
     ? "border-red-500 bg-red-50 text-red-700 placeholder:text-red-400 focus:ring-red-500"
@@ -142,7 +147,8 @@ export function Input({
   const resolvedVariant = variants[variant] ?? variants["primary"];
   const resolvedSize    = sizes[size]       ?? sizes["md"];
 
-  const finalClasses = `${baseClasses} ${resolvedVariant} ${resolvedSize} ${errorClasses}`.trim();
+  const finalClasses = `${baseClasses} ${resolvedVariant} ${resolvedSize} ${errorClasses} ${extraClasses}`.trim();
+
 
   // ─── Bloque 5: Atributos HTML y dataset ───────────────────────────────────
   const disabledAttr  = disabled  ? "disabled"          : "";
@@ -156,6 +162,7 @@ export function Input({
   // ─── Bloque 6: Retorno de HTML condicional ────────────────────────────────
   return `
     <input
+      ${idAttr}
       type="${type}"
       name="${name}"
       placeholder="${placeholder}"
