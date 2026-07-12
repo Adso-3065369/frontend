@@ -56,18 +56,18 @@ export const Navbar = () => {
                 <span class="block text-xs text-text-secondary mt-0.5">${roleName}</span>
             </div>
 
-            <div class="p-2 flex flex-col gap-1">
+            <div class="p-2 flex flex-col gap-1 flex">
                 ${Link({
                     href: '#/perfil',
                     variant: 'ghost',
                     text: '<i class="ri-user-settings-line text-lg mr-2"></i> Administrar Perfil',
-                    className: 'flex items-center px-3 py-2.5 text-sm font-bold text-text-secondary hover:text-white hover:bg-bg-hover rounded-lg transition-colors'
+                    className: 'flex items-center justify-start px-3 py-2.5 text-sm font-bold text-text-secondary hover:text-white hover:bg-bg-hover rounded-lg transition-colors'
                 })}
                 ${Link({
                     href: '#/configuracion',
                     variant: 'ghost',
                     text: '<i class="ri-settings-4-line text-lg mr-2"></i> Configuración',
-                    className: 'flex items-center px-3 py-2.5 text-sm font-bold text-text-secondary hover:text-white hover:bg-bg-hover rounded-lg transition-colors'
+                    className: 'flex items-center justify-start px-3 py-2.5 text-sm font-bold text-text-secondary hover:text-white hover:bg-bg-hover rounded-lg transition-colors'
                 })}
             </div>
 
@@ -125,6 +125,11 @@ export const Navbar = () => {
                 </div>
                 
                 <div id="auth-section" class="flex items-center gap-4">
+                    <!-- boton para abrir el menu en moviles -->
+                    <button id="mobile-menu-trigger" class="md:hidden p-2 text-gray-400">
+                        <i class="ri-menu-line text-2xl"></i>
+                    </button>
+
                     ${isAuth 
                         ? userMenuHtml 
                         : `
@@ -143,6 +148,33 @@ export const Navbar = () => {
                 </div>
                 
             </nav>
+
+            <!-- menu movil que aparece al presionar la hamburguesa -->
+            <div id="mobile-navigation" class="hidden md:hidden border-t border-gray-800 bg-bg-surface">
+                <div class="flex flex-col p-4 gap-2">
+                    ${RenderIf('dashboard.index', 
+                        Link({ text: 'Dashboard', href: '#/dashboard', variant: 'nav' })
+                    )}
+                    ${RenderIf('users.index',
+                        Link({ text: 'Usuarios', href: '#/usuarios', variant: 'nav' })
+                    )}
+                    ${RenderIf('clients.index',
+                        Link({ text: 'Clientes', href: '#/clientes', variant: 'nav' })
+                    )}
+                    ${RenderIf('roles.index',
+                        Link({ text: 'Roles', href: '#/roles', variant: 'nav' })
+                    )}
+                    ${RenderIf('products.index',
+                        Link({ text: 'Productos', href: '#/productos', variant: 'nav' })
+                    )}
+                    ${RenderIf('categories.index',
+                        Link({ text: 'Categorías', href: '#/categorias', variant: 'nav' })
+                    )}
+                    ${RenderIf('sales.index',
+                        Link({ text: 'Ventas', href: '#/ventas', variant: 'nav' })
+                    )}
+                </div>
+            </div>
         </header>
     `;
 };

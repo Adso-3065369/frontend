@@ -40,6 +40,19 @@ export const NavbarController = () => {
     }
 
     // =========================================================================
+    // 1.1 logica para el menu movil
+    // =========================================================================
+    const mobileBtn = document.getElementById('mobile-menu-trigger');
+    const mobileNav = document.getElementById('mobile-navigation');
+
+    if (mobileBtn && mobileNav) {
+        mobileBtn.addEventListener('click', () => {
+            // simplemente quita o pone la clase hidden para mostrar el menu
+            mobileNav.classList.toggle('hidden');
+        });
+    }
+
+    // =========================================================================
     // 2. LÓGICA DE CIERRE DE SESIÓN
     // =========================================================================
     const btnLogout = document.getElementById('btn-logout');

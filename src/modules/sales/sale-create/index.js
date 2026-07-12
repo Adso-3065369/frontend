@@ -4,9 +4,19 @@ import { saleState } from './sale.state.js';
 import { UI } from './sale.ui.js';
 import { SearchService } from './sale.search.js';
 
+const checkSaveButtonStatus = () => {
+    const hasProducts = saleState.cart.length > 0;
+    const hasClient = !!saleState.client; // Evalúa si existe el objeto cliente
+    
+    // El botón se deshabilita si falta alguno de los dos
+    UI.elements.btnSave.disabled = !(hasProducts && hasClient);
+};
+
 export const SaleCreateHandler = () => {
     // 1. Inicialización
     if (!UI.init()) return;
+
+    checkSaveButtonStatus();
 
     const saleRepo = createRepository('sales'); 
     const clientRepo = createRepository('clients');
@@ -42,6 +52,8 @@ export const SaleCreateHandler = () => {
             UI.modals.close('client-modal');
             UI.elements.searchClientInput.value = '';
             UI.elements.clientSearchResults.innerHTML = '';
+
+            checkSaveButtonStatus();
             return;
         }
 
@@ -66,6 +78,8 @@ export const SaleCreateHandler = () => {
             UI.modals.close('product-modal');
             UI.elements.searchProductInput.value = '';
             UI.elements.productSearchResults.innerHTML = '';
+
+            checkSaveButtonStatus();
             return;
         }
 
@@ -83,12 +97,15 @@ export const SaleCreateHandler = () => {
             }
             
             UI.updateCart(saleState.cart, saleState.total);
+
+            checkSaveButtonStatus();
             return;
         }
 
         // Desvincular Cliente
         if (e.target.closest('#btn-remove-client')) {
             saleState.removeClient();
+            checkSaveButtonStatus();
             UI.updateClient(null);
         }
     });
@@ -97,7 +114,10 @@ export const SaleCreateHandler = () => {
     // 4. FLUJO DE FACTURACIÓN (Envío Transaccional)
     // ============================================================================
     UI.elements.btnSave.addEventListener('click', async () => {
-        if (saleState.cart.length === 0) return;
+        if (saleState.cart.length === 0 || !saleState.client){
+            alert("Debe estar asignado un cliente y un producto para proceder con la compra");
+            return
+        };
 
         const payload = saleState.getPayload();
 
@@ -105,6 +125,7 @@ export const SaleCreateHandler = () => {
         UI.elements.btnSave.disabled = true;
         UI.elements.btnSave.innerHTML = '<i class="ri-loader-4-line animate-spin"></i> Procesando...';
 
+        
         try {
             const response = await saleRepo.create(payload);
 
@@ -117,11 +138,14 @@ export const SaleCreateHandler = () => {
                 alert("✅ Transacción registrada con éxito.");
             }
         } catch (error) {
+
             console.error("Fallo en la transacción:", error);
             alert("❌ Ocurrió un error al registrar la venta. Revise su conexión.");
         } finally {
+            checkSaveButtonStatus();
             UI.elements.btnSave.disabled = saleState.cart.length === 0;
             UI.elements.btnSave.innerHTML = originalText;
         }
+
     });
 };
