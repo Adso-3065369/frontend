@@ -27,10 +27,6 @@ export const LoginView = async () => {
                             placeholder: 'admin@sistema.com',
                             className: 'border-gray-700 focus:border-brand text-white'
                         })}
-                        ${Label({
-                            text: 'Contraseña',
-                            htmlFor: 'password'
-                        })}
                         <div class="relative">
                             ${Input({
                                 label: 'Contraseña',
