@@ -1,4 +1,4 @@
-import { Button, Input, Link } from '@/components/ui';
+import { Button, Input, Link, Label } from '@/components/ui';
 
 /**
  * @file LoginView.js
