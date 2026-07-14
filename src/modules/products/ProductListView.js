@@ -34,16 +34,26 @@ export const ProductListView = async () => {
             </div>
   
 
-            <div class="flex justify-end">
-                <select
-                    id="sort-price"
-                    class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white"
-                >
-                    <option value="name-ASC">Nombre (A-Z)</option>
-                    <option value="price-DESC">Precio: Mayor a menor</option>
-                    <option value="price-ASC">Precio: Menor a mayor</option>
-                </select>
-            </div>
+            
+          <div class="flex items-center justify-end gap-3 mb-4">
+
+              <label
+                  for="sort-price"
+                  class="text-sm font-medium text-text-secondary"
+              >
+                  Ordenar por:
+              </label>
+
+              <select
+                  id="sort-price"
+                  class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white"
+              >
+                  <option value="name-ASC">Nombre (A-Z)</option>
+                  <option value="price-DESC">Precio Mayor a menor</option>
+                  <option value="price-ASC">Precio Menor a mayor</option>
+              </select>
+
+          </div>
 
             <div id="products-table-container" class="app-card overflow-hidden">
                 <div class="px-6 py-12 text-center text-text-secondary italic">
