@@ -50,18 +50,19 @@ const productColumns = [
         header: 'Estado',
         accessor: 'isActive',
         render: (product) => {
-            const isCurrentlyActive = product.isActive !== false; 
-            return Badge({
-                text: isCurrentlyActive ? 'Activo' : 'Inactivo',
-                variant: isCurrentlyActive ? 'success' : 'danger'
-            });
-        }
+        const isCurrentlyActive = Number(product.is_active) === 1;
+
+        return Badge({
+            text: isCurrentlyActive ? 'Activo' : 'Inactivo',
+            variant: isCurrentlyActive ? 'success' : 'danger'
+        });
+    }
     },
     {
         header: 'Acciones',
         accessor: 'actions',
         render: (product) => {
-            const isCurrentlyActive = product.isActive !== false;
+            const isCurrentlyActive = Number(product.is_active) === 1;
             
             return `
                 <div class="flex items-center justify-end gap-2">
@@ -110,6 +111,8 @@ const loadAndRenderProducts = async (productRepo, tableContainer, page = 1, limi
         
         const payload = response.data || response;
         const products = payload.data || [];
+        console.log("Primer producto:", products[0]);
+        console.table(products);
         const meta = payload.meta || null;
         
         const tableHtml = DataTable({
@@ -141,11 +144,14 @@ const loadAndRenderProducts = async (productRepo, tableContainer, page = 1, limi
 // 3. LÓGICA DE ESTADO (Toggle Activo/Inactivo)
 // ============================================================================
 const handleToggleStatus = async (btnElement, currentProducts, productRepo, refreshCallback) => {
+
+    console.log("Entró a handleToggleStatus");
+
     const id = btnElement.dataset.id;
     const productToToggle = currentProducts.find(p => String(p.id) === String(id));
     if (!productToToggle) return;
 
-    const isCurrentlyActive = productToToggle.isActive !== false;
+    const isCurrentlyActive = Number(productToToggle.is_active) === 1;
     
     if (!confirm(`¿Está seguro de que desea ${isCurrentlyActive ? 'desactivar' : 'activar'} el producto "${productToToggle.name}"?`)) return;
         
