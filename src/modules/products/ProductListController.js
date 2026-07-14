@@ -111,8 +111,6 @@ const loadAndRenderProducts = async (productRepo, tableContainer, page = 1, limi
         
         const payload = response.data || response;
         const products = payload.data || [];
-        console.log("Primer producto:", products[0]);
-        console.table(products);
         const meta = payload.meta || null;
         
         const tableHtml = DataTable({
@@ -143,10 +141,7 @@ const loadAndRenderProducts = async (productRepo, tableContainer, page = 1, limi
 // ============================================================================
 // 3. LÓGICA DE ESTADO (Toggle Activo/Inactivo)
 // ============================================================================
-const handleToggleStatus = async (btnElement, currentProducts, productRepo, refreshCallback) => {
-
-    console.log("Entró a handleToggleStatus");
-
+const handleToggleStatus = async (btnElement, currentProducts, productRepo, refreshCallback) => { 
     const id = btnElement.dataset.id;
     const productToToggle = currentProducts.find(p => String(p.id) === String(id));
     if (!productToToggle) return;
