@@ -25,12 +25,15 @@ export const ConfigurationController = async () => {
         const submitBtn = form.querySelector('button[type="submit"]');
         if (submitBtn) submitBtn.disabled = true;
 
-        const currentConfig = await configRepo.getById(1).catch(() => ({
+        // 1. Obtenemos la respuesta completa del repositorio o null si falla la red
+        const response = await configRepo.getById(1).catch(() => null);
+
+        // 2. Si la respuesta fue exitosa, extraemos "data". Si no, usamos el objeto por defecto.
+        const currentConfig = (response && response.data) ? response.data : {
             businessName: '',
             nit: '',
             taxRate: 19
-        }));
-
+        };
         // Llenar los campos visualmente apuntando a sus IDs
         const nameInput = document.getElementById('businessName');
         const nitInput = document.getElementById('nit');
