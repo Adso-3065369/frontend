@@ -101,10 +101,27 @@ const productColumns = [
 // ============================================================================
 // 2. FASE DE CARGA DE DATOS Y RENDERIZADO
 // ============================================================================
-const loadAndRenderProducts = async (productRepo, tableContainer, page = 1, limit = 10, search = '') => {
+
+/**
+ * Se agregaron los parámetros sortBy y sortOrder para permitir
+ * enviar al backend el campo y la dirección del ordenamiento.
+ *
+ * Valores por defecto:
+ * - sortBy = 'name': ordena inicialmente por nombre.
+ * - sortOrder = 'ASC': aplica un orden ascendente.
+ */
+
+const loadAndRenderProducts = async (productRepo, tableContainer, page = 1, limit = 10, search = '',  sortBy = 'name',
+    sortOrder = 'ASC') => {
     try {
-        const searchParam = search ? `&search=${encodeURIComponent(search)}` : '';
-        const queryString = `?page=${page}&limit=${limit}${searchParam}`;
+      const searchParam = search ? `&search=${encodeURIComponent(search)}` : '';
+      
+      /**
+       * Se agregaron los parámetros sortBy y sortOrder a la URL de la
+       * petición para enviar al backend el criterio y la dirección
+       * del ordenamiento seleccionados por el usuario.
+       */
+        const queryString = `?page=${page}&limit=${limit}${searchParam}`+ `&sortBy=${sortBy}` + `&sortOrder=${sortOrder}`;
 
         const response = await productRepo.getAll(queryString);
         
@@ -201,6 +218,7 @@ const handleHardDelete = async (btnElement, productRepo, refreshCallback) => {
 export const ProductListHandler = async () => {
     const productRepo = createRepository('products');
     const tableContainer = document.getElementById('products-table-container');
+    const sortSelect = document.getElementById('sort-price');
 
     if (!tableContainer) return;
 
@@ -208,6 +226,13 @@ export const ProductListHandler = async () => {
     let currentPage = 1;
     const itemsPerPage = 10;
     let currentSearchTerm = ''; 
+    /**
+     * Variables utilizadas para controlar el ordenamiento del catálogo.
+     * currentSortBy: almacena el campo por el cual se ordenarán los productos.
+     * currentSortOrder: almacena la dirección del ordenamiento (ASC o DESC).
+     */
+    let currentSortBy = 'name';
+    let currentSortOrder = 'ASC';
 
     const refreshView = async () => {
         currentProducts = await loadAndRenderProducts(
@@ -215,11 +240,38 @@ export const ProductListHandler = async () => {
             tableContainer, 
             currentPage, 
             itemsPerPage, 
-            currentSearchTerm
+            currentSearchTerm,
+            /**
+             * Esto permite actualizar el listado de productos respetando el orden
+             * (ascendente o descendente) sin afectar la paginación ni la búsqueda.
+             */
+            currentSortBy,
+            currentSortOrder
         );
     };
 
+  await refreshView();
+
+  /**
+  * Evento que detecta el cambio en el selector de ordenamiento.
+  *
+  * Obtiene el campo y el tipo de orden seleccionados por el usuario,
+  * actualiza las variables de control, reinicia la paginación a la
+  * primera página y recarga el listado de productos aplicando el
+  * nuevo criterio de ordenamiento.
+  */
+  
+  sortSelect?.addEventListener('change', async (e) => {
+
+    const [sortBy, sortOrder] = e.target.value.split('-');
+
+    currentSortBy = sortBy;
+    currentSortOrder = sortOrder;
+
+    currentPage = 1;
+
     await refreshView();
+});
     
     tableContainer.addEventListener('click', async (e) => {
         const btnPaginate = e.target.closest('button[data-action="paginate"]');
