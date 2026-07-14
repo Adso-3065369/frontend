@@ -15,6 +15,8 @@ export const UI = {
             clientSearchResults: document.getElementById('client-search-results'),
             searchProductInput: document.getElementById('search-product-input'),
             productSearchResults: document.getElementById('product-search-results'),
+            confirmSummary: document.getElementById('sale-confirm-summary'),
+            btnConfirmSale: document.getElementById('btn-confirm-sale'),
         };
         return !!this.elements.cartContainer;
     },
@@ -124,5 +126,30 @@ export const UI = {
             data: cartData,
             emptyMessage: 'El carrito está vacío. Agregue productos para comenzar.'
         });
+    },
+
+    // 🚀 Resumen mostrado en el modal de confirmación antes de registrar la venta
+    renderConfirmSummary(client, cart, total) {
+        const clientLabel = client
+            ? `${client.name} <span class="text-gray-500 font-mono text-xs">(Doc: ${client.document_number})</span>`
+            : 'Consumidor Final';
+
+        const itemsCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+
+        this.elements.confirmSummary.innerHTML = `
+            <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+                <span class="text-sm">Cliente</span>
+                <span class="text-white font-bold text-right">${clientLabel}</span>
+            </div>
+            <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+                <span class="text-sm">Productos en el carrito</span>
+                <span class="text-white font-bold">${cart.length} (${itemsCount} unds.)</span>
+            </div>
+            <div class="flex justify-between items-center text-lg">
+                <span class="font-bold text-white">Total a cobrar</span>
+                <span class="font-black text-brand">$${total.toLocaleString('es-CO')}</span>
+            </div>
+            <p class="text-xs text-text-secondary italic pt-2">Verifique los datos antes de confirmar. Esta acción registrará la venta de forma definitiva.</p>
+        `;
     }
 };
