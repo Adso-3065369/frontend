@@ -24,6 +24,7 @@ export const CategoryCreateView = async () => {
             <form novalidate id="form-create-category" class="app-card space-y-6">
                 ${Label({
                     text: 'Nombre de la Categoría',
+                    htmlFor:'categoryName' 
                 })}
                 ${Input({
                     type: 'text',
