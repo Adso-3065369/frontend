@@ -122,16 +122,19 @@ export const LoginHandler = async () => {
 
         const formData = new FormData(form);
 
+
         const rules = {
             email: {
                 required: true,
                 isEmail: true,
-                message: 'Por favor, ingrese un correo electrónico válido.'
+                message: 'Ingrese un correo electrónico válido (ej: usuario@dominio.com).'
             },
             password: {
                 required: true,
-                minLength: 6,
-                message: 'La contraseña debe tener al menos 6 caracteres.'
+                minLength: 8,
+                isStrongPassword: true,
+                minLengthMessage: 'La contraseña debe tener al menos 8 caracteres.',
+                strongMessage: 'La contraseña debe contener al menos una mayúscula (A-Z), una minúscula (a-z) y un número (0-9).'
             }
         };
 

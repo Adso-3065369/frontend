@@ -1,4 +1,4 @@
-import { Button, Input, Link } from '@/components/ui';
+import { Button, Input, Link, Label } from '@/components/ui';
 
 /**
  * @file ClientEditView.js
@@ -32,8 +32,10 @@ export const ClientEditView = async () => {
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-2">
+                            ${Label({
+                                text:'Número de Documento',
+                            })}
                             ${Input({
-                                label: 'Número de Documento',
                                 type: 'text',
                                 id: 'document_number',
                                 name: 'document_number',
@@ -43,8 +45,10 @@ export const ClientEditView = async () => {
                         </div>
 
                         <div class="space-y-2">
+                            ${Label({
+                                text:'Nombre Completo / Razón Social',
+                            })}
                             ${Input({
-                                label: 'Nombre Completo / Razón Social',
                                 type: 'text',
                                 id: 'name',
                                 name: 'name',
@@ -54,8 +58,10 @@ export const ClientEditView = async () => {
                         </div>
 
                         <div class="space-y-2">
+                            ${Label({
+                                text:'Correo Electronico',
+                            })}
                             ${Input({
-                                label: 'Correo Electrónico',
                                 type: 'text',
                                 id: 'email',
                                 name: 'email',
@@ -65,8 +71,10 @@ export const ClientEditView = async () => {
                         </div>
 
                         <div class="space-y-2">
+                            ${Label({
+                                text:'Telefono de Contacto',
+                            })}
                             ${Input({
-                                label: 'Teléfono de Contacto',
                                 type: 'text',
                                 id: 'phone',
                                 name: 'phone',

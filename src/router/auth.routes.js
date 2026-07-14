@@ -16,7 +16,11 @@ import {
     LoginView, 
     RegisterView, 
     LoginHandler, 
-    RegisterHandler 
+    RegisterHandler,
+    ForgotPasswordView,
+    ForgotPasswordHandler,
+    ResetPasswordView,
+    ResetPasswordHandler
 } from '@/modules/auth';
 
 // Vista para identificar recursos no encontrados
@@ -60,6 +64,24 @@ export const authRoutes = [
     { 
         path: '#/404', 
         view: NotFoundView,
+        requiresAuth: false,
+        layout: PublicLayout,
+        permissions: []
+    },
+    // Ruta de recuperación de contraseña (paso 1: solicitar email)
+    {
+        path: '#/recuperar-contrasena',
+        view: ForgotPasswordView,
+        init: ForgotPasswordHandler,
+        requiresAuth: false,
+        layout: PublicLayout,
+        permissions: []
+    },
+    // Ruta de restablecimiento de contraseña (paso 2: nueva contraseña)
+    {
+        path: '#/restablecer-contrasena',
+        view: ResetPasswordView,
+        init: ResetPasswordHandler,
         requiresAuth: false,
         layout: PublicLayout,
         permissions: []

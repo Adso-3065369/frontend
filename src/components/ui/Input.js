@@ -32,6 +32,7 @@ export function Input({
   className   = "",
 } = {}) {
 
+
   // ─── Bloque 1: Base Classes ───────────────────────────────────────────────
   const baseClasses = [
     "w-full",
@@ -141,6 +142,8 @@ export function Input({
     lg: "px-4   py-3   text-lg",
   };
 
+  const extraClasses = className || '';
+
   // ─── Bloque 4: Final Classes ──────────────────────────────────────────────
   const errorClasses = hasError
     ? "border-red-500 bg-red-50 text-red-700 placeholder:text-red-400 focus:ring-red-500"
@@ -150,6 +153,8 @@ export function Input({
   const resolvedSize    = sizes[size]       ?? sizes["md"];
 
   const finalClasses = `${baseClasses} ${resolvedVariant} ${resolvedSize} ${errorClasses} ${className}`.trim();
+  const finalClasses = `${baseClasses} ${resolvedVariant} ${resolvedSize} ${errorClasses} ${extraClasses}`.trim();
+
 
   // ─── Bloque 5: Atributos HTML y dataset ───────────────────────────────────
   const idAttr        = id        ? `id="${id}"`           : "";
@@ -171,6 +176,7 @@ export function Input({
 
   const inputHTML = `
     <input
+      ${idAttr}
       type="${type}"
       ${idAttr}
       name="${name}"

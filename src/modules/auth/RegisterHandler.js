@@ -183,10 +183,16 @@ export const RegisterHandler = async () => {
         const formData = new FormData(form);
 
         const rules = {
-            fullName: { required: true, minLength: 3, message: 'El nombre completo es requerido.' },
-            email: { required: true, isEmail: true, message: 'Ingrese un correo electrónico válido.' },
-            password: { required: true, minLength: 6, message: 'La contraseña debe tener al menos 6 caracteres.' },
-            passwordConfirm: { required: true, minLength: 6, message: 'Confirme su contraseña por seguridad.' }
+            fullName: { required: true, minLength: 3, message: 'El nombre completo debe tener al menos 3 caracteres.' },
+            email: { required: true, isEmail: true, message: 'Ingrese un correo electrónico válido (ej: usuario@dominio.com).' },
+            password: {
+                required: true,
+                minLength: 8,
+                isStrongPassword: true,
+                minLengthMessage: 'La contraseña debe tener al menos 8 caracteres.',
+                strongMessage: 'La contraseña debe contener al menos una mayúscula (A-Z), una minúscula (a-z) y un número (0-9).'
+            },
+            passwordConfirm: { required: true, minLength: 8, message: 'Confirme su contraseña.' }
         };
 
         // Ejecutamos el validador de utils
