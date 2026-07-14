@@ -94,21 +94,41 @@ export const LoginHandler = async () => {
 
     if (!form) return;
 
+    // Toggle visibilidad de contraseña
+    const toggleBtn = document.getElementById('toggle-login-password');
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            const input = document.getElementById('password');
+            const icon = toggleBtn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('ri-eye-line', 'ri-eye-off-line');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('ri-eye-off-line', 'ri-eye-line');
+            }
+        });
+    }
+
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const formData = new FormData(form);
 
+
         const rules = {
             email: {
                 required: true,
                 isEmail: true,
-                message: 'Por favor, ingrese un correo electrónico válido.'
+                message: 'Ingrese un correo electrónico válido (ej: usuario@dominio.com).'
             },
             password: {
                 required: true,
-                minLength: 6,
-                message: 'La contraseña debe tener al menos 6 caracteres.'
+                minLength: 8,
+                isStrongPassword: true,
+                minLengthMessage: 'La contraseña debe tener al menos 8 caracteres.',
+                strongMessage: 'La contraseña debe contener al menos una mayúscula (A-Z), una minúscula (a-z) y un número (0-9).'
             }
         };
 

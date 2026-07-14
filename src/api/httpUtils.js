@@ -4,7 +4,7 @@
  */
 import { AuthService } from '@/services';
 
-export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 /**
  * Construye las cabeceras estándar e inyecta el token de acceso.
