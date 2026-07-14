@@ -1,15 +1,11 @@
 import { Link } from '@/components/ui';
 import { RenderIf } from '@/utils';
-import { UserFilterView } from './components/UserFilterView.js';
 
 /**
  * @file UserListView.js
- * @description Interfaz de gestión de usuarios ajustada al patrón de componentes dinámicos y separada de la lógica.
+ * @description Interfaz de gestión de usuarios ajustada al patrón de componentes dinámicos y libre de lógica.
  */
 export const UserListView = async () => {
-    // Generamos el HTML del filtro de usuarios (estructura pura)
-    const filterHtml = UserFilterView();
-
     return `
         <div class="p-6 space-y-6">
             <div class="sm:flex sm:items-center sm:justify-between">
@@ -29,8 +25,8 @@ export const UserListView = async () => {
                 </div>
             </div>
 
-            <!-- Filtros de Búsqueda y Rol -->
-            ${filterHtml}
+            <!-- Contenedor dinámico para los Filtros de Búsqueda y Rol -->
+            <div id="user-filter-container"></div>
 
             <div id="users-table-container" class="app-card overflow-hidden">
                 <div class="px-6 py-12 text-center text-text-secondary italic">

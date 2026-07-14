@@ -1,6 +1,7 @@
 import { createRepository } from '@/repositories';
 import { DataTable, Link, Button, Pagination, Badge } from '@/components/ui';
 import { RenderIf, debounce } from '@/utils';
+import { UserFilterView } from './components/UserFilterView.js';
 
 /**
  * @file UserListHandler.js
@@ -174,6 +175,23 @@ export const UserListHandler = async () => {
     // Salida temprana si el contenedor no existe en la vista actual
     if (!tableContainer) return;
 
+    // Cargamos los roles para el filtro de forma dinámica (Lógica de acceso a datos en el Handler)
+    let roles = [];
+    try {
+        const rolesRepo = createRepository('roles');
+        const response = await rolesRepo.getAll();
+        const payload = response.data || response;
+        roles = Array.isArray(payload) ? payload : (payload.data || []);
+    } catch (error) {
+        console.error("Fallo al obtener los roles para el filtro:", error);
+    }
+
+    // Inyectamos el componente de filtros en su contenedor dinámico de la vista
+    const filterContainer = document.getElementById('user-filter-container');
+    if (filterContainer) {
+        filterContainer.innerHTML = UserFilterView(roles);
+    }
+
     // Declaramos variables de estado locales para la vista de usuarios
     let currentUsers = [];
     let currentPage = 1;
@@ -242,12 +260,11 @@ export const UserListHandler = async () => {
         if (btnPaginate && !btnPaginate.disabled) {
             // Convertimos a entero el número de página guardado en el dataset del botón
             const newPage = parseInt(btnPaginate.dataset.page, 10);
-            if (!isNaN(newPage)) {
-                // Actualizamos la página activa del estado
-                currentPage = newPage;
-                // Cargamos y mostramos la página de datos correspondiente
-                await refreshView();
-            }
+            if (!newPage || isNaN(newPage)) return;
+            // Actualizamos la página activa del estado
+            currentPage = newPage;
+            // Cargamos y mostramos la página de datos correspondiente
+            await refreshView();
             return;
         }
         
