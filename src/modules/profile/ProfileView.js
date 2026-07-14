@@ -9,7 +9,7 @@ import { profileCard } from './components/profileCard';
 
 
 export const ProfileView = async () => {
-    return `
+  return `
         <div class="p-6 space-y-6">
             <div class="sm:flex sm:items-center sm:justify-between">
                 <div>
@@ -18,9 +18,9 @@ export const ProfileView = async () => {
                 </div>
             </div>
             ${Card({
-                id: 'profile-card',
-                className:'flex-row gap-5 items-center px-5 py-10 justify-between'
-            })}
-        </div>a
+    id: 'profile-card',
+    className: 'flex-row gap-5 items-center px-5 py-10 justify-between'
+  })}
+        </div>
     `;
 };
