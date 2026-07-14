@@ -111,21 +111,29 @@ export const SaleCreateHandler = () => {
     });
 
     // ============================================================================
-    // 4. FLUJO DE FACTURACIÓN (Envío Transaccional)
+    // 4. FLUJO DE FACTURACIÓN (Confirmación + Envío Transaccional)
     // ============================================================================
-    UI.elements.btnSave.addEventListener('click', async () => {
+
+    // 4.1. Al presionar "Procesar Factura" ya no se envía de inmediato:
+    // se valida y se abre el modal de confirmación con el resumen de la venta.
+    UI.elements.btnSave.addEventListener('click', () => {
         if (saleState.cart.length === 0 || !saleState.client){
             alert("Debe estar asignado un cliente y un producto para proceder con la compra");
             return
         };
 
+        UI.renderConfirmSummary(saleState.client, saleState.cart, saleState.total);
+        UI.modals.open('sale-confirm-modal');
+    });
+
+    // 4.2. Solo al confirmar dentro del modal se ejecuta la transacción real.
+    UI.elements.btnConfirmSale.addEventListener('click', async () => {
         const payload = saleState.getPayload();
 
-        const originalText = UI.elements.btnSave.innerHTML;
-        UI.elements.btnSave.disabled = true;
-        UI.elements.btnSave.innerHTML = '<i class="ri-loader-4-line animate-spin"></i> Procesando...';
+        const originalText = UI.elements.btnConfirmSale.innerHTML;
+        UI.elements.btnConfirmSale.disabled = true;
+        UI.elements.btnConfirmSale.innerHTML = '<i class="ri-loader-4-line animate-spin"></i> Procesando...';
 
-        
         try {
             const response = await saleRepo.create(payload);
 
@@ -134,7 +142,8 @@ export const SaleCreateHandler = () => {
                 saleState.removeClient();
                 UI.updateCart([], 0);
                 UI.updateClient(null);
-                
+                UI.modals.close('sale-confirm-modal');
+
                 alert("✅ Transacción registrada con éxito.");
             }
         } catch (error) {
@@ -143,9 +152,8 @@ export const SaleCreateHandler = () => {
             alert("❌ Ocurrió un error al registrar la venta. Revise su conexión.");
         } finally {
             checkSaveButtonStatus();
-            UI.elements.btnSave.disabled = saleState.cart.length === 0;
-            UI.elements.btnSave.innerHTML = originalText;
+            UI.elements.btnConfirmSale.disabled = false;
+            UI.elements.btnConfirmSale.innerHTML = originalText;
         }
-
     });
 };

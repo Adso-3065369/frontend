@@ -116,6 +116,30 @@ export const SaleCreateView = async () => {
                 `
             })}
 
+            ${Modal({
+                id: 'sale-confirm-modal',
+                title: 'Confirmar Venta',
+                size: 'md',
+                content: `
+                    <div id="sale-confirm-summary" class="space-y-4 text-text-secondary">
+                        <!-- Resumen inyectado dinámicamente por UI.renderConfirmSummary() -->
+                    </div>
+                    <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-800">
+                        ${Button({
+                            text: 'Cancelar',
+                            variant: 'outline-secondary',
+                            dataset: { 'modal-close': 'sale-confirm-modal' }
+                        })}
+                        ${Button({
+                            id: 'btn-confirm-sale',
+                            text: 'Confirmar Venta',
+                            variant: 'primary',
+                            icon: '<i class="ri-check-line"></i>'
+                        })}
+                    </div>
+                `
+            })}
+
         </div>
     `;
 };
