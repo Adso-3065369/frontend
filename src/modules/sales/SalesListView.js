@@ -30,7 +30,7 @@ export const SalesListView = async () => {
 
             <div class="flex sm:flex-row w-full gap-2 @xl:flex-col">
                 <div class="w-4/5 flex-none">
-                    <input id="search-input" type="text" placeholder="Ingrese el codigo de la venta o nombre del vendedor" class="w-full text-white text-left p-4 border-4 border-(--primary) hover:bg-bg-hover transition-colors rounded-l-lg bg-transparent">
+                    <input id="search-input" type="text" placeholder="Ingrese el codigo de la venta, nombre del cliente o nombre del vendedor" class="w-full text-white text-left p-4 border-4 border-(--primary) hover:bg-bg-hover transition-colors rounded-l-lg bg-transparent">
                 </div>
 
                 <div class="flex-none">
