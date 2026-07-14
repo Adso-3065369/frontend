@@ -34,6 +34,7 @@ export const ClientEditView = async () => {
                         <div class="space-y-2">
                             ${Label({
                                 text:'Número de Documento',
+                                htmlFor:'document_number'  
                             })}
                             ${Input({
                                 type: 'text',
@@ -47,6 +48,7 @@ export const ClientEditView = async () => {
                         <div class="space-y-2">
                             ${Label({
                                 text:'Nombre Completo / Razón Social',
+                                htmlFor:'name' 
                             })}
                             ${Input({
                                 type: 'text',
@@ -60,6 +62,7 @@ export const ClientEditView = async () => {
                         <div class="space-y-2">
                             ${Label({
                                 text:'Correo Electronico',
+                                htmlFor:'email' 
                             })}
                             ${Input({
                                 type: 'text',
@@ -73,6 +76,7 @@ export const ClientEditView = async () => {
                         <div class="space-y-2">
                             ${Label({
                                 text:'Telefono de Contacto',
+                                htmlFor: 'phone'
                             })}
                             ${Input({
                                 type: 'text',
