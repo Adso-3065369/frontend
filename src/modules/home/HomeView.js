@@ -9,7 +9,7 @@ export const HomeView = async () => {
         <div class="max-w-2xl mx-auto bg-bg-surface border border-gray-800 rounded-3xl p-12 shadow-2xl text-center">
 
             <div class="mx-auto w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-6 shadow-inner">
-                <svg class="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-10 h-10 text-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round"
                           stroke-linejoin="round"
                           stroke-width="2"
@@ -29,8 +29,10 @@ export const HomeView = async () => {
 
             <div class="flex flex-col sm:flex-row justify-center gap-4">
 
-                <a href="#/login"
-                class="px-8 py-3 text-sm font-bold text-black bg-brand rounded-xl brand-lg hover:bg-primary-dark transition-all duration-300 hover:scale-105 active:scale-95">
+                <a
+                    href="#/login"
+                    class="inline-flex items-center justify-center px-8 py-3 min-w-[190px] rounded-xl bg-primary text-black font-bold hover:bg-primary-dark transition-all duration-300 hover:scale-105 active:scale-95"
+                >
                     Ingresar al Sistema
                 </a>
 
