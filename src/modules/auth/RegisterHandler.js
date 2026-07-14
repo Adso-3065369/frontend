@@ -176,7 +176,7 @@ export const RegisterHandler = async () => {
             isValid = false;
             error.push({
                 field: 'passwordConfirm',
-                message: 'Las contraseñas ingresadas no coinciden.'
+                message: 'La confirmacion de la contraseña no coincide.'
             });
         }
 
