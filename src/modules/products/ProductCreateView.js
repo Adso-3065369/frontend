@@ -8,7 +8,7 @@ export const ProductCreateView = async () => {
     return `
         <div class="p-6 max-w-3xl mx-auto space-y-6">
             <div class="flex items-center gap-4 mb-8 w-full">
-                 ${Link({
+                ${Link({
                     href: '#/productos',
                     variant: 'outline-secondary',
                     icon: '<i class="ri-arrow-left-line"></i>',
@@ -28,6 +28,7 @@ export const ProductCreateView = async () => {
                     <div class="md:col-span-1">
                         ${Label({
                             text:'Codigo SKU',
+                            htmlFor:'productCode', 
                         })}
                         ${Input({
                             id: 'productCode',
@@ -40,6 +41,7 @@ export const ProductCreateView = async () => {
                     <div class="md:col-span-1">
                         ${Label({
                             text:'Nombre del Producto',
+                            htmlFor: 'productName' 
                         })}
                         ${Input({
                             id: 'productName',
@@ -52,6 +54,7 @@ export const ProductCreateView = async () => {
                     <div class="md:col-span-1">
                         ${Label({
                             text:'Precio Unitario ($)',
+                            htmlFor:'productPrice' 
                         })}
                         ${Input({
                             type: 'number',
@@ -66,6 +69,7 @@ export const ProductCreateView = async () => {
                     <div class="md:col-span-1">
                         ${Label({
                             text:'Stock Inicial',
+                            htmlFor:'productStock' 
                         })}
                         ${Input({
                             type: 'number',
@@ -80,6 +84,7 @@ export const ProductCreateView = async () => {
                     <div id="category-select-container" class="md:col-span-2">
                         ${Label({
                             text: 'Categoría', 
+                            htmlFor: 'productCategory'
                         })}
                         ${Select({
                             id: 'productCategory',
