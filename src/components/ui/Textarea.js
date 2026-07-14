@@ -23,19 +23,19 @@ export const Textarea = ({
     dataset = {}
 } = {}) => {
     // Bloque 1: baseClasses
-    const baseClasses = "w-full appearance-none transition-all duration-200 outline-none resize-y disabled:bg-gray-100 disabled:text-gray-500 disabled:border-gray-200 disabled:cursor-not-allowed";
+    const baseClasses = "w-full appearance-none transition-all duration-200 outline-none resize-y disabled:bg-bg-hover disabled:text-text-secondary disabled:border-gray-700 disabled:cursor-not-allowed";
 
     // Bloque 2: variants
     const variants = {
-        primary: "border border-gray-300 text-gray-900 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/30",
-        secondary: "border border-gray-300 text-gray-900 focus:border-brand-secondary focus:ring-2 focus:ring-brand-secondary/30",
-        danger: "border border-red-500 text-red-900 focus:border-red-500 focus:ring-2 focus:ring-red-500/30 placeholder-red-300",
-        success: "border border-green-500 text-green-900 focus:border-green-500 focus:ring-2 focus:ring-green-500/30",
-        ghost: "border-transparent bg-transparent text-gray-900 hover:bg-gray-50 focus:bg-white focus:ring-2 focus:ring-brand-primary/30",
-        "outline-primary": "border-2 border-brand-primary text-gray-900 focus:ring-2 focus:ring-brand-primary/30",
-        "outline-secondary": "border-2 border-brand-secondary text-gray-900 focus:ring-2 focus:ring-brand-secondary/30",
-        "outline-danger": "border-2 border-red-500 text-gray-900 focus:ring-2 focus:ring-red-500/30",
-        "outline-success": "border-2 border-green-500 text-gray-900 focus:ring-2 focus:ring-green-500/30"
+        primary: "border border-gray-700 bg-transparent text-text-primary placeholder-text-secondary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/30",
+        secondary: "border border-gray-700 bg-transparent text-text-primary placeholder-text-secondary focus:border-brand-secondary focus:ring-2 focus:ring-brand-secondary/30",
+        danger: "border border-red-500 bg-transparent text-text-primary focus:border-red-500 focus:ring-2 focus:ring-red-500/30 placeholder-red-300",
+        success: "border border-green-500 bg-transparent text-text-primary focus:border-green-500 focus:ring-2 focus:ring-green-500/30",
+        ghost: "border-transparent bg-transparent text-text-primary placeholder-text-secondary hover:bg-bg-hover focus:bg-bg-surface focus:ring-2 focus:ring-brand-primary/30",
+        "outline-primary": "border-2 border-brand-primary bg-transparent text-text-primary placeholder-text-secondary focus:ring-2 focus:ring-brand-primary/30",
+        "outline-secondary": "border-2 border-brand-secondary bg-transparent text-text-primary placeholder-text-secondary focus:ring-2 focus:ring-brand-secondary/30",
+        "outline-danger": "border-2 border-red-500 bg-transparent text-text-primary placeholder-text-secondary focus:ring-2 focus:ring-red-500/30",
+        "outline-success": "border-2 border-green-500 bg-transparent text-text-primary placeholder-text-secondary focus:ring-2 focus:ring-green-500/30"
     };
 
     // Bloque 3: sizes
