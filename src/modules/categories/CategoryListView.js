@@ -1,22 +1,14 @@
 import { Link } from '@/components/ui';
 import { RenderIf } from '@/utils';
-import { CategoryFilter } from './components/CategoryFilter.js';
+import { CategoryFilterView } from './components/CategoryFilterView.js';
 
 /**
  * @file CategoryListView.js
  * @description Interfaz para el listado de categorías adaptada al patrón de componentes dinámicos.
  */
 export const CategoryListView = async () => {
-    // Generamos el componente de filtros de categoría pasando un callback que se ejecuta al escribir
-    const filterHtml = CategoryFilter((searchTerm) => {
-        // Instanciamos un evento personalizado para propagar que los filtros de categoría han cambiado
-        const event = new CustomEvent('category-filters-changed', {
-            // Guardamos el término de búsqueda de texto dentro del detalle del evento
-            detail: { searchTerm }
-        });
-        // Lanzamos el evento a nivel de documento para ser escuchado en el orquestador de categorías
-        document.dispatchEvent(event);
-    });
+    // Generamos el HTML del filtro de categorías (estructura pura)
+    const filterHtml = CategoryFilterView();
 
     return `
         <div class="p-6 space-y-6">

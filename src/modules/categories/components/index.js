@@ -1,1 +1,1 @@
-export * from './CategoryFilter.js';
+export * from './CategoryFilterView.js';

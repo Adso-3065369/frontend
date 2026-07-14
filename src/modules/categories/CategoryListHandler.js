@@ -1,6 +1,6 @@
 import { createRepository } from '@/repositories';
 import { DataTable, Link, Button, Pagination, Badge } from '@/components/ui';
-import { RenderIf } from '@/utils';
+import { RenderIf, debounce } from '@/utils';
 
 /**
  * @file CategoryListHandler.js
@@ -156,24 +156,29 @@ export const CategoryListHandler = async () => {
         );
     };
 
-    // Removemos suscripciones previas para evitar llamadas duplicadas por cambios de enrutador
-    if (window.categoryFiltersChangedListener) {
-        document.removeEventListener('category-filters-changed', window.categoryFiltersChangedListener);
+    // Removemos escuchadores globales antiguos de búsqueda si existen para evitar fugas de memoria
+    if (window.categorySearchInputListener) {
+        document.removeEventListener('input', window.categorySearchInputListener);
     }
 
-    // Definimos el callback cuando cambien los inputs del filtro
-    window.categoryFiltersChangedListener = async (e) => {
-        // Extraemos el nuevo término de búsqueda desde el detalle del evento
-        const { searchTerm } = e.detail;
+    // Lógica del filtro de búsqueda con debounce (espera 500ms tras escribir)
+    const debouncedSearch = debounce(async (searchTerm) => {
         currentSearchTerm = searchTerm;
-        // Reiniciamos la visualización a la página uno al realizar una nueva búsqueda
+        // Reiniciamos a la página uno al buscar
         currentPage = 1;
-        // Refrescamos la vista con los nuevos datos filtrados
+        // Recargamos el listado
         await refreshView();
+    }, 500);
+
+    // Definimos el manejador del evento de entrada
+    window.categorySearchInputListener = (e) => {
+        if (e.target && e.target.id === 'category-filter-search') {
+            debouncedSearch(e.target.value);
+        }
     };
 
-    // Escuchamos el evento de cambio de filtros lanzado desde la interfaz
-    document.addEventListener('category-filters-changed', window.categoryFiltersChangedListener);
+    // Escuchamos los cambios en el input de búsqueda a nivel de documento
+    document.addEventListener('input', window.categorySearchInputListener);
 
     // Renderizado base inicial
     await refreshView();
