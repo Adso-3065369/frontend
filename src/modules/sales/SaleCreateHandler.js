@@ -101,7 +101,7 @@ export const SaleCreateHandler = () => {
             ui.clientContainer.innerHTML = `
                 <i class="ri-user-unfollow-line text-2xl block mb-2 opacity-50"></i>
                 <p class="text-sm">Ningún cliente seleccionado.</p>
-                <p class="text-xs mt-1">Se registrará como Consumidor Final.</p>
+                <p class="text-xs mt-1 text-red-400 font-medium">Debe seleccionar un cliente para procesar la factura.</p>
             `;
             return;
         }
