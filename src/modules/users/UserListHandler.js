@@ -1,6 +1,6 @@
 import { createRepository } from '@/repositories';
 import { DataTable, Link, Button, Pagination, Badge } from '@/components/ui';
-import { RenderIf } from '@/utils';
+import { RenderIf, debounce } from '@/utils';
 
 /**
  * @file UserListHandler.js
@@ -193,25 +193,44 @@ export const UserListHandler = async () => {
         );
     };
 
-    // Removemos suscripciones previas para evitar llamadas duplicadas por cambios de enrutador
-    if (window.userFiltersChangedListener) {
-        document.removeEventListener('user-filters-changed', window.userFiltersChangedListener);
+    // Removemos escuchadores globales antiguos si existen para evitar fugas de memoria
+    if (window.userSearchInputListener) {
+        document.removeEventListener('input', window.userSearchInputListener);
+    }
+    if (window.userRoleChangeListener) {
+        document.removeEventListener('change', window.userRoleChangeListener);
     }
 
-    // Definimos el callback cuando cambien los inputs del filtro
-    window.userFiltersChangedListener = async (e) => {
-        // Extraemos las nuevas opciones de filtro desde el detalle del evento
-        const { searchTerm, roleName } = e.detail;
-        currentSearchTerm = searchTerm;
-        currentRole = roleName;
+    // Lógica del filtro de búsqueda con debounce (espera 500ms tras escribir)
+    const debouncedSearch = debounce(async (searchVal) => {
+        currentSearchTerm = searchVal;
         // Reiniciamos la visualización a la página uno al realizar una nueva búsqueda
         currentPage = 1;
         // Refrescamos la vista con los nuevos datos filtrados
         await refreshView();
+    }, 500);
+
+    // Definimos el manejador del evento de entrada para la búsqueda por texto
+    window.userSearchInputListener = (e) => {
+        if (e.target && e.target.id === 'filter-search') {
+            debouncedSearch(e.target.value);
+        }
     };
 
-    // Escuchamos el evento de cambio de filtros lanzado desde la interfaz
-    document.addEventListener('user-filters-changed', window.userFiltersChangedListener);
+    // Definimos el manejador del evento de cambio para el filtro de rol
+    window.userRoleChangeListener = async (e) => {
+        if (e.target && e.target.id === 'filter-role') {
+            currentRole = e.target.value;
+            // Reiniciamos la visualización a la página uno al realizar una nueva búsqueda
+            currentPage = 1;
+            // Refrescamos la vista con los nuevos datos filtrados
+            await refreshView();
+        }
+    };
+
+    // Escuchamos los cambios en los inputs a nivel de documento
+    document.addEventListener('input', window.userSearchInputListener);
+    document.addEventListener('change', window.userRoleChangeListener);
 
     // Ejecutamos la carga inicial de datos paginados al entrar a la sección
     await refreshView();

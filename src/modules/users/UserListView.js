@@ -1,23 +1,14 @@
 import { Link } from '@/components/ui';
 import { RenderIf } from '@/utils';
-import { UserFilter } from './components/UserFilter.js';
-import { filterUsers } from '@/utils/filterUsers.js';
+import { UserFilterView } from './components/UserFilterView.js';
 
 /**
  * @file UserListView.js
- * @description Interfaz de gestión de usuarios ajustada al patrón de componentes dinámicos.
+ * @description Interfaz de gestión de usuarios ajustada al patrón de componentes dinámicos y separada de la lógica.
  */
 export const UserListView = async () => {
-    // Generamos el componente de filtros de usuario pasando un callback que se ejecuta al escribir o cambiar de rol
-    const filterHtml = UserFilter((searchTerm, roleName) => {
-        // Instanciamos un evento personalizado para propagar que los filtros han cambiado
-        const event = new CustomEvent('user-filters-changed', {
-            // Guardamos el término de búsqueda de texto y el nombre del rol dentro del detalle del evento
-            detail: { searchTerm, roleName }
-        });
-        // Lanzamos el evento a nivel de documento para ser escuchado en el orquestador principal
-        document.dispatchEvent(event);
-    });
+    // Generamos el HTML del filtro de usuarios (estructura pura)
+    const filterHtml = UserFilterView();
 
     return `
         <div class="p-6 space-y-6">
