@@ -115,7 +115,7 @@ const loadAndRenderProducts = async (productRepo, tableContainer, page = 1, limi
     sortOrder = 'ASC') => {
     try {
         const searchParam = search ? `&name=${encodeURIComponent(search)}` : '';
-        const queryString = `?page=${page}&limit=${limit}${searchParam}`;
+        const queryString =`?page=${page}&limit=${limit}${searchParam}&sortBy=${sortBy}&sortOrder=${sortOrder}`;
 
         const response = await productRepo.getAll(queryString);
 
@@ -215,6 +215,9 @@ export const ProductListHandler = async () => {
   let currentPage = 1;
   const itemsPerPage = 10;
   let currentSearchTerm = '';
+  let currentSortBy = 'name';
+  let currentSortOrder = 'ASC';
+};
 
   const refreshView = async () => {
     currentProducts = await loadAndRenderProducts(
@@ -222,10 +225,12 @@ export const ProductListHandler = async () => {
       tableContainer,
       currentPage,
       itemsPerPage,
-      currentSearchTerm
+      currentSearchTerm,
+      currentSortBy,
+      currentSortOrder
     );
   };
-};  
+  
   await refreshView();
 
   /**
