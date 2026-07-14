@@ -1,4 +1,4 @@
-import { Input, Button, Link } from '@/components/ui';
+import { Input, Button, Link, Label } from '@/components/ui';
 
 /**
  * @file CategoryEditPage.js
@@ -22,16 +22,16 @@ export const CategoryEditView = async () => {
             </div>
 
             <form novalidate id="form-edit-category" class="app-card space-y-6">
-                
+                ${Label({
+                    text:  'Nombre de la Categoría',
+                })}
                 ${Input({
-                    label: 'Nombre de la Categoría',
                     type: 'text',
                     id: 'categoryName',
                     name: 'categoryName',
                     required: false,
                     placeholder: 'Ej. Electrónica, Calzado, etc.'
                 })}
-
                 <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-800">
                     
                     ${Link({
@@ -40,7 +40,6 @@ export const CategoryEditView = async () => {
                         variant: 'ghost',
                         className: 'font-medium'
                     })}
-                    
                     ${Button({
                         text: 'Guardar Cambios',
                         type: 'submit',
@@ -48,7 +47,6 @@ export const CategoryEditView = async () => {
                         size: 'md',
                         className: 'px-8 shadow-md font-black'
                     })}
-
                 </div>
             </form>
         </div>

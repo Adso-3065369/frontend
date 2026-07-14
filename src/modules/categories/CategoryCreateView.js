@@ -1,4 +1,4 @@
-import { Input, Button, Link } from '@/components/ui';
+import { Input, Button, Link, Label } from '@/components/ui';
 
 /**
  * @file CategoryCreateView.js 
@@ -22,9 +22,10 @@ export const CategoryCreateView = async () => {
             </div>
 
             <form novalidate id="form-create-category" class="app-card space-y-6">
-                
+                ${Label({
+                    text: 'Nombre de la Categoría',
+                })}
                 ${Input({
-                    label: 'Nombre de la Categoría',
                     type: 'text',
                     id: 'categoryName',
                     name: 'categoryName',
