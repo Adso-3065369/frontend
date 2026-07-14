@@ -1,4 +1,4 @@
-import { Input, Select, Button, Link} from '@/components/ui';
+import { Input, Select, Button, Link, Label} from '@/components/ui';
 
 /**
  * @file ProductEditView.js
@@ -19,8 +19,10 @@ export const ProductEditView = async () => {
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     
                     <div class="md:col-span-1">
+                        ${Label({
+                            text:'Código SKU',
+                        })}
                         ${Input({
-                            label: 'Código SKU',
                             id: 'productCode',
                             name: 'productCode',
                             placeholder: 'Cargando información...',
@@ -29,8 +31,10 @@ export const ProductEditView = async () => {
                     </div>
 
                     <div class="md:col-span-1">
+                        ${Label({
+                            text:  'Nombre del Producto',
+                        })}
                         ${Input({
-                            label: 'Nombre del Producto',
                             id: 'productName',
                             name: 'productName',
                             placeholder: 'Cargando información...',
@@ -39,8 +43,10 @@ export const ProductEditView = async () => {
                     </div>
 
                     <div class="md:col-span-1">
+                        ${Label({
+                            text:  'Precio Unitario ($)',
+                        })}
                         ${Input({
-                            label: 'Precio Unitario ($)',
                             type: 'number',
                             id: 'productPrice',
                             name: 'productPrice',
@@ -51,8 +57,10 @@ export const ProductEditView = async () => {
                     </div>
 
                     <div class="md:col-span-1">
+                        ${Label({
+                            text:'Stock Actual',
+                        })}
                         ${Input({
-                            label: 'Stock Actual',
                             type: 'number',
                             id: 'productStock',
                             name: 'productStock',
@@ -63,8 +71,10 @@ export const ProductEditView = async () => {
                     </div>
 
                     <div id="category-select-container" class="md:col-span-2">
+                        ${Label({
+                            text:  'Categoría',
+                        })}
                         ${Select({
-                            label: 'Categoría',
                             id: 'productCategory',
                             name: 'productCategory',
                             required: true,

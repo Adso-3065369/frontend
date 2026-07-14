@@ -16,8 +16,10 @@ export const ProductCreateView = async () => {
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     
                     <div class="md:col-span-1">
+                        ${Label({
+                            text:'Codigo SKU',
+                        })}
                         ${Input({
-                            label: 'Codigo SKU',
                             id: 'productCode',
                             name: 'productCode',
                             placeholder: 'Ej. CAM-OX-001',
@@ -26,8 +28,10 @@ export const ProductCreateView = async () => {
                     </div>
 
                     <div class="md:col-span-1">
+                        ${Label({
+                            text:'Nombre del Producto',
+                        })}
                         ${Input({
-                            label: 'Nombre del Producto',
                             id: 'productName',
                             name: 'productName',
                             placeholder: 'Ej. Camisa Oxford Slim Fit',
@@ -36,8 +40,10 @@ export const ProductCreateView = async () => {
                     </div>
 
                     <div class="md:col-span-1">
+                        ${Label({
+                            text:'Precio Unitario ($)',
+                        })}
                         ${Input({
-                            label: 'Precio Unitario ($)',
                             type: 'number',
                             id: 'productPrice',
                             name: 'productPrice',
@@ -48,9 +54,10 @@ export const ProductCreateView = async () => {
                     </div>
 
                     <div class="md:col-span-1">
-
+                        ${Label({
+                            text:'Stock Inicial',
+                        })}
                         ${Input({
-                            label: 'Stock Inicial',
                             type: 'number',
                             id: 'productStock',
                             name: 'productStock',
@@ -61,8 +68,10 @@ export const ProductCreateView = async () => {
                     </div>
 
                     <div id="category-select-container" class="md:col-span-2">
+                        ${Label({
+                            text: 'Categoría', 
+                        })}
                         ${Select({
-                            label: 'Categoría',
                             id: 'productCategory',
                             name: 'productCategory',
                             required: true,
