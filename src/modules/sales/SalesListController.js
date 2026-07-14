@@ -117,6 +117,7 @@ export const SalesListHandler = async () => {
 
     const searchInput = document.getElementById('search-input');
     const dateInput = document.getElementById('date-input');
+    const clearBtn = document.getElementById('clear-filters-btn');
 
     if (!tableContainer) return;
 
@@ -184,6 +185,32 @@ export const SalesListHandler = async () => {
             currentPage = 1; 
             loadAndRenderSales();
         });
+    }
+
+    if (clearBtn){
+        clearBtn.addEventListener("click", () => {
+            clearBtn.addEventListener('click', () => {
+                let hasFilters = false;
+
+                // Limpiamos los inputs visualmente
+                if (searchInput && searchInput.value !== '') {
+                    searchInput.value = '';
+                    hasFilters = true;
+                }
+                
+                if (dateInput && dateInput.value !== '') {
+                    dateInput.value = '';
+                    hasFilters = true;
+                }
+
+                // Solo recargamos si realmente había algo que limpiar
+                if (hasFilters) {
+                    currentPage = 1;
+                    loadAndRenderSales();
+                }
+            
+            });
+        })
     }
 
     // ============================================================================
