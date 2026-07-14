@@ -1,4 +1,4 @@
-import { Input, Button, Link } from '@/components/ui';
+import { Input, Button, Link, Label } from '@/components/ui';
 
 /**
  * @file CategoryEditPage.js
@@ -7,22 +7,32 @@ import { Input, Button, Link } from '@/components/ui';
 export const CategoryEditView = async () => {
     return `
         <div class="p-6 max-w-2xl mx-auto space-y-6">
-            <div>
+        <div class="flex items-center gap-4 mb-8 w-full">
+                ${Link({
+                    href: '#/categorias',
+                    variant: 'outline-secondary',
+                    icon: '<i class="ri-arrow-left-line"></i>',
+                    size: 'sm',
+                    className: 'w-8 h-8 p-0 flex items-center justify-center'
+                })}
+                <div>
                 <h1 class="text-2xl font-black text-white">Editar Categoría</h1>
                 <p class="text-sm text-text-secondary">Modifique el nombre de la categoría seleccionada.</p>
+                </div>
             </div>
 
             <form novalidate id="form-edit-category" class="app-card space-y-6">
-                
+                ${Label({
+                    text:  'Nombre de la Categoría',
+                    htmlFor:'categoryName'
+                })}
                 ${Input({
-                    label: 'Nombre de la Categoría',
                     type: 'text',
                     id: 'categoryName',
                     name: 'categoryName',
                     required: false,
                     placeholder: 'Ej. Electrónica, Calzado, etc.'
                 })}
-
                 <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-800">
                     
                     ${Link({
@@ -31,7 +41,6 @@ export const CategoryEditView = async () => {
                         variant: 'ghost',
                         className: 'font-medium'
                     })}
-                    
                     ${Button({
                         text: 'Guardar Cambios',
                         type: 'submit',
@@ -39,7 +48,6 @@ export const CategoryEditView = async () => {
                         size: 'md',
                         className: 'px-8 shadow-md font-black'
                     })}
-
                 </div>
             </form>
         </div>

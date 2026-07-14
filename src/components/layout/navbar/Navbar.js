@@ -10,6 +10,12 @@ import { RenderIf } from '@/utils';
  */
 export const Navbar = () => {
     const isAuth = AuthService.isLoggedIn();
+
+    // Ruta actual (ej. '#/productos'). Se usa para marcar el link del menú como activo.
+    // Se compara solo el primer segmento para que sub-rutas (ej. '#/productos/5') también resalten 'Productos'.
+    const currentHash = window.location.hash || '#/';
+    const currentBase = '#/' + (currentHash.split('/')[1] || '');
+    const isActive = (href) => href === currentBase;
     
     // 1. Lectura cruda desde el servicio
     const rawUser = isAuth ? AuthService.getUser() : null;
@@ -102,25 +108,25 @@ export const Navbar = () => {
 
                 <div class="hidden md:flex items-center gap-2 flex-grow">
                 ${RenderIf('dashboard.index', 
-                    Link({ text: 'Dashboard', href: '#/dashboard', variant: 'nav' })
+                    Link({ text: 'Dashboard', href: '#/dashboard', variant: 'nav', active: isActive('#/dashboard') })
                 )}
                 ${RenderIf('users.index',
-                    Link({ text: 'Usuarios', href: '#/usuarios', variant: 'nav' })
+                    Link({ text: 'Usuarios', href: '#/usuarios', variant: 'nav', active: isActive('#/usuarios') })
                 )}
                 ${RenderIf('clients.index',
-                    Link({ text: 'Clientes', href: '#/clientes', variant: 'nav' })
+                    Link({ text: 'Clientes', href: '#/clientes', variant: 'nav', active: isActive('#/clientes') })
                 )}
                 ${RenderIf('roles.index',
-                    Link({ text: 'Roles', href: '#/roles', variant: 'nav' })
+                    Link({ text: 'Roles', href: '#/roles', variant: 'nav', active: isActive('#/roles') })
                 )}
                 ${RenderIf('products.index',
-                    Link({ text: 'Productos', href: '#/productos', variant: 'nav' })
+                    Link({ text: 'Productos', href: '#/productos', variant: 'nav', active: isActive('#/productos') })
                 )}
                 ${RenderIf('categories.index',
-                    Link({ text: 'Categorías', href: '#/categorias', variant: 'nav' })
+                    Link({ text: 'Categorías', href: '#/categorias', variant: 'nav', active: isActive('#/categorias') })
                 )}
                 ${RenderIf('sales.index',
-                    Link({ text: 'Ventas', href: '#/ventas', variant: 'nav' })
+                    Link({ text: 'Ventas', href: '#/ventas', variant: 'nav', active: isActive('#/ventas') })
                 )}
                 </div>
                 
@@ -153,25 +159,25 @@ export const Navbar = () => {
             <div id="mobile-navigation" class="hidden md:hidden border-t border-gray-800 bg-bg-surface">
                 <div class="flex flex-col p-4 gap-2">
                     ${RenderIf('dashboard.index', 
-                        Link({ text: 'Dashboard', href: '#/dashboard', variant: 'nav' })
+                        Link({ text: 'Dashboard', href: '#/dashboard', variant: 'nav', active: isActive('#/dashboard') })
                     )}
                     ${RenderIf('users.index',
-                        Link({ text: 'Usuarios', href: '#/usuarios', variant: 'nav' })
+                        Link({ text: 'Usuarios', href: '#/usuarios', variant: 'nav', active: isActive('#/usuarios') })
                     )}
                     ${RenderIf('clients.index',
-                        Link({ text: 'Clientes', href: '#/clientes', variant: 'nav' })
+                        Link({ text: 'Clientes', href: '#/clientes', variant: 'nav', active: isActive('#/clientes') })
                     )}
                     ${RenderIf('roles.index',
-                        Link({ text: 'Roles', href: '#/roles', variant: 'nav' })
+                        Link({ text: 'Roles', href: '#/roles', variant: 'nav', active: isActive('#/roles') })
                     )}
                     ${RenderIf('products.index',
-                        Link({ text: 'Productos', href: '#/productos', variant: 'nav' })
+                        Link({ text: 'Productos', href: '#/productos', variant: 'nav', active: isActive('#/productos') })
                     )}
                     ${RenderIf('categories.index',
-                        Link({ text: 'Categorías', href: '#/categorias', variant: 'nav' })
+                        Link({ text: 'Categorías', href: '#/categorias', variant: 'nav', active: isActive('#/categorias') })
                     )}
                     ${RenderIf('sales.index',
-                        Link({ text: 'Ventas', href: '#/ventas', variant: 'nav' })
+                        Link({ text: 'Ventas', href: '#/ventas', variant: 'nav', active: isActive('#/ventas') })
                     )}
                 </div>
             </div>

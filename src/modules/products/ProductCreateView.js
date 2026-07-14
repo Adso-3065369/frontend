@@ -7,17 +7,30 @@ import { Input, Select, Button, Link, Label     } from '@/components/ui';
 export const ProductCreateView = async () => {
     return `
         <div class="p-6 max-w-3xl mx-auto space-y-6">
-            <div>
+            <div class="flex items-center gap-4 mb-8 w-full">
+                ${Link({
+                    href: '#/productos',
+                    variant: 'outline-secondary',
+                    icon: '<i class="ri-arrow-left-line"></i>',
+                    size: 'sm',
+                    className: 'w-8 h-8 p-0 flex items-center justify-center'
+                })}
+                <div>
                 <h1 class="text-2xl font-black text-white">Nuevo Producto</h1>
                 <p class="text-sm text-text-secondary">Complete los datos para añadir un artículo al catálogo.</p>
+                </div>
             </div>
+            
 
             <form novalidate id="form-create-product" class="app-card space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     
                     <div class="md:col-span-1">
+                        ${Label({
+                            text:'Codigo SKU',
+                            htmlFor:'productCode', 
+                        })}
                         ${Input({
-                            label: 'Codigo SKU',
                             id: 'productCode',
                             name: 'productCode',
                             placeholder: 'Ej. CAM-OX-001',
@@ -26,8 +39,11 @@ export const ProductCreateView = async () => {
                     </div>
 
                     <div class="md:col-span-1">
+                        ${Label({
+                            text:'Nombre del Producto',
+                            htmlFor: 'productName' 
+                        })}
                         ${Input({
-                            label: 'Nombre del Producto',
                             id: 'productName',
                             name: 'productName',
                             placeholder: 'Ej. Camisa Oxford Slim Fit',
@@ -36,8 +52,11 @@ export const ProductCreateView = async () => {
                     </div>
 
                     <div class="md:col-span-1">
+                        ${Label({
+                            text:'Precio Unitario ($)',
+                            htmlFor:'productPrice' 
+                        })}
                         ${Input({
-                            label: 'Precio Unitario ($)',
                             type: 'number',
                             id: 'productPrice',
                             name: 'productPrice',
@@ -48,9 +67,11 @@ export const ProductCreateView = async () => {
                     </div>
 
                     <div class="md:col-span-1">
-
+                        ${Label({
+                            text:'Stock Inicial',
+                            htmlFor:'productStock' 
+                        })}
                         ${Input({
-                            label: 'Stock Inicial',
                             type: 'number',
                             id: 'productStock',
                             name: 'productStock',
@@ -61,8 +82,11 @@ export const ProductCreateView = async () => {
                     </div>
 
                     <div id="category-select-container" class="md:col-span-2">
+                        ${Label({
+                            text: 'Categoría', 
+                            htmlFor: 'productCategory'
+                        })}
                         ${Select({
-                            label: 'Categoría',
                             id: 'productCategory',
                             name: 'productCategory',
                             required: true,

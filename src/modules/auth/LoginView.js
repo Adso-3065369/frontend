@@ -1,4 +1,4 @@
-import { Button, Input, Link } from '@/components/ui';
+import { Button, Input, Link, Label } from '@/components/ui';
 
 /**
  * @file LoginView.js
@@ -27,14 +27,25 @@ export const LoginView = async () => {
                             placeholder: 'admin@sistema.com',
                             className: 'border-gray-700 focus:border-brand text-white'
                         })}
-                        ${Input({
-                            label: 'Contraseña',
-                            type: 'password',
-                            id: 'password',
-                            name: 'password',
-                            placeholder: '••••••••',
-                            className: 'border-gray-700 focus:border-brand text-white'
-                        })}
+                        <div class="relative">
+                            ${Input({
+                                label: 'Contraseña',
+                                type: 'password',
+                                id: 'password',
+                                name: 'password',
+                                placeholder: '••••••••',
+                                className: 'border-gray-700 focus:border-brand text-white pr-10'
+                            })}
+                            <button type="button" id="toggle-login-password"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-all cursor-pointer">
+                                <i class="ri-eye-line text-lg"></i>
+                            </button>
+                        </div>
+                        <div class="flex justify-end mt-1">
+                            <a href="#/recuperar-contrasena" class="text-xs text-brand hover:underline transition-all font-medium">
+                                ¿Olvidó su contraseña?
+                            </a>
+                        </div>
                     </div>
 
                     ${Button({
