@@ -10,6 +10,12 @@ import { RenderIf } from '@/utils';
  */
 export const Navbar = () => {
     const isAuth = AuthService.isLoggedIn();
+
+    // Ruta actual (ej. '#/productos'). Se usa para marcar el link del menú como activo.
+    // Se compara solo el primer segmento para que sub-rutas (ej. '#/productos/5') también resalten 'Productos'.
+    const currentHash = window.location.hash || '#/';
+    const currentBase = '#/' + (currentHash.split('/')[1] || '');
+    const isActive = (href) => href === currentBase;
     
     // 1. Lectura cruda desde el servicio
     const rawUser = isAuth ? AuthService.getUser() : null;
@@ -56,18 +62,18 @@ export const Navbar = () => {
                 <span class="block text-xs text-text-secondary mt-0.5">${roleName}</span>
             </div>
 
-            <div class="p-2 flex flex-col gap-1">
+            <div class="p-2 flex flex-col gap-1 flex">
                 ${Link({
                     href: '#/perfil',
                     variant: 'ghost',
                     text: '<i class="ri-user-settings-line text-lg mr-2"></i> Administrar Perfil',
-                    className: 'flex items-center px-3 py-2.5 text-sm font-bold text-text-secondary hover:text-white hover:bg-bg-hover rounded-lg transition-colors'
+                    className: 'flex items-center justify-start px-3 py-2.5 text-sm font-bold text-text-secondary hover:text-white hover:bg-bg-hover rounded-lg transition-colors'
                 })}
                 ${Link({
                     href: '#/configuracion',
                     variant: 'ghost',
                     text: '<i class="ri-settings-4-line text-lg mr-2"></i> Configuración',
-                    className: 'flex items-center px-3 py-2.5 text-sm font-bold text-text-secondary hover:text-white hover:bg-bg-hover rounded-lg transition-colors'
+                    className: 'flex items-center justify-start px-3 py-2.5 text-sm font-bold text-text-secondary hover:text-white hover:bg-bg-hover rounded-lg transition-colors'
                 })}
             </div>
 
@@ -102,29 +108,34 @@ export const Navbar = () => {
 
                 <div class="hidden md:flex items-center gap-2 flex-grow">
                 ${RenderIf('dashboard.index', 
-                    Link({ text: 'Dashboard', href: '#/dashboard', variant: 'nav' })
+                    Link({ text: 'Dashboard', href: '#/dashboard', variant: 'nav', active: isActive('#/dashboard') })
                 )}
                 ${RenderIf('users.index',
-                    Link({ text: 'Usuarios', href: '#/usuarios', variant: 'nav' })
+                    Link({ text: 'Usuarios', href: '#/usuarios', variant: 'nav', active: isActive('#/usuarios') })
                 )}
                 ${RenderIf('clients.index',
-                    Link({ text: 'Clientes', href: '#/clientes', variant: 'nav' })
+                    Link({ text: 'Clientes', href: '#/clientes', variant: 'nav', active: isActive('#/clientes') })
                 )}
                 ${RenderIf('roles.index',
-                    Link({ text: 'Roles', href: '#/roles', variant: 'nav' })
+                    Link({ text: 'Roles', href: '#/roles', variant: 'nav', active: isActive('#/roles') })
                 )}
                 ${RenderIf('products.index',
-                    Link({ text: 'Productos', href: '#/productos', variant: 'nav' })
+                    Link({ text: 'Productos', href: '#/productos', variant: 'nav', active: isActive('#/productos') })
                 )}
                 ${RenderIf('categories.index',
-                    Link({ text: 'Categorías', href: '#/categorias', variant: 'nav' })
+                    Link({ text: 'Categorías', href: '#/categorias', variant: 'nav', active: isActive('#/categorias') })
                 )}
                 ${RenderIf('sales.index',
-                    Link({ text: 'Ventas', href: '#/ventas', variant: 'nav' })
+                    Link({ text: 'Ventas', href: '#/ventas', variant: 'nav', active: isActive('#/ventas') })
                 )}
                 </div>
                 
                 <div id="auth-section" class="flex items-center gap-4">
+                    <!-- boton para abrir el menu en moviles -->
+                    <button id="mobile-menu-trigger" class="md:hidden p-2 text-gray-400">
+                        <i class="ri-menu-line text-2xl"></i>
+                    </button>
+
                     ${isAuth 
                         ? userMenuHtml 
                         : `
@@ -143,6 +154,33 @@ export const Navbar = () => {
                 </div>
                 
             </nav>
+
+            <!-- menu movil que aparece al presionar la hamburguesa -->
+            <div id="mobile-navigation" class="hidden md:hidden border-t border-gray-800 bg-bg-surface">
+                <div class="flex flex-col p-4 gap-2">
+                    ${RenderIf('dashboard.index', 
+                        Link({ text: 'Dashboard', href: '#/dashboard', variant: 'nav', active: isActive('#/dashboard') })
+                    )}
+                    ${RenderIf('users.index',
+                        Link({ text: 'Usuarios', href: '#/usuarios', variant: 'nav', active: isActive('#/usuarios') })
+                    )}
+                    ${RenderIf('clients.index',
+                        Link({ text: 'Clientes', href: '#/clientes', variant: 'nav', active: isActive('#/clientes') })
+                    )}
+                    ${RenderIf('roles.index',
+                        Link({ text: 'Roles', href: '#/roles', variant: 'nav', active: isActive('#/roles') })
+                    )}
+                    ${RenderIf('products.index',
+                        Link({ text: 'Productos', href: '#/productos', variant: 'nav', active: isActive('#/productos') })
+                    )}
+                    ${RenderIf('categories.index',
+                        Link({ text: 'Categorías', href: '#/categorias', variant: 'nav', active: isActive('#/categorias') })
+                    )}
+                    ${RenderIf('sales.index',
+                        Link({ text: 'Ventas', href: '#/ventas', variant: 'nav', active: isActive('#/ventas') })
+                    )}
+                </div>
+            </div>
         </header>
     `;
 };

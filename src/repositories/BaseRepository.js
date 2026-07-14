@@ -22,6 +22,10 @@ export const createRepository = (resource) => {
         update: (id, data) => {
             return httpClient(`${resource}/${id}`, { method: 'PUT', body: JSON.stringify(data) });
         },
+
+        updateStatus: (id, data) => {
+            return httpClient(`${resource}/${id}/status`, { method: 'PATCH', body: JSON.stringify(data) });
+        },
         
         delete: (id) => {
             return httpClient(`${resource}/${id}`, { method: 'DELETE' });

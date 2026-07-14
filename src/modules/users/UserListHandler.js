@@ -85,40 +85,52 @@ const userColumns = [
 ];
 
 // ============================================================================
-// 2. FASE DE CARGA DE DATOS Y RENDERIZADO (Server-Side Pagination)
+// 2. FASE DE CARGA DE DATOS Y RENDERIZADO DESDE EL SERVIDOR
 // ============================================================================
-const loadAndRenderUsers = async (userRepo, tableContainer, page = 1, limit = 10, search = '') => {
+const loadAndRenderUsers = async (userRepo, tableContainer, page = 1, limit = 10, search = '', role = '') => {
     try {
+        // Construimos de forma dinámica los parámetros de búsqueda de texto y rol
         const searchParam = search ? `&search=${encodeURIComponent(search)}` : '';
-        const queryString = `?page=${page}&limit=${limit}${searchParam}`;
-        
+        const roleParam = role ? `&role=${encodeURIComponent(role)}` : '';
+        // Unimos los filtros con los límites de paginación en una sola cadena de consulta
+        const queryString = `?page=${page}&limit=${limit}${searchParam}${roleParam}`;
+
+        // Hacemos el llamado HTTP GET al repositorio de usuarios pasando los parámetros
         const response = await userRepo.getAll(queryString);
         
-        // Desempaquetado dual defensivo
+        // Obtenemos los datos encapsulados en el cuerpo de la respuesta
         const payload = response.data || response;
-        const users = Array.isArray(payload) ? payload : (payload.data || []);
+        // Extraemos la colección de usuarios devueltos
+        const users = payload.data || [];
+        // Extraemos la metadata de la paginación devuelta por el servidor (currentPage, lastPage, etc.)
         const meta = payload.meta || null;
         
+        // Generamos el HTML de la tabla con las columnas contractuales y los datos de usuarios
         const tableHtml = DataTable({
             columns: userColumns,
             data: users,
-            emptyMessage: search 
+            emptyMessage: (search || role) 
                 ? 'No se encontraron usuarios bajo esos parámetros.' 
                 : 'El directorio de usuarios está vacío.'
         });
 
-        // Inyección del componente paginador unificado
+        // Generamos el HTML del componente estandarizado de paginación inyectándole la metadata
         const paginationHtml = meta ? Pagination({ meta, itemName: 'usuarios' }) : '';
 
+        // Insertamos el HTML combinado de la tabla y la paginación en el contenedor del DOM
         tableContainer.innerHTML = tableHtml + paginationHtml;
         
+        // Retornamos el arreglo de usuarios cargados para mantener el estado en el orquestador
+        return users;
     } catch (error) {
-        console.error("Fallo de red en la extracción de usuarios:", error);
+        // En caso de fallo de comunicación o base de datos, mostramos un aviso al usuario
+        console.error("Error al obtener usuarios:", error);
         tableContainer.innerHTML = `
             <div class="p-6 text-center text-red-500 font-bold bg-red-500/10 border border-red-500 m-4 rounded-lg">
                 Fallo de comunicación con el servidor al intentar cargar el directorio.
             </div>
         `;
+        return [];
     }
 };
 
@@ -154,45 +166,78 @@ const handleDeleteUser = async (btnElement, userRepo, refreshCallback) => {
 // 4. ORQUESTADOR PRINCIPAL: Delegación y Estado
 // ============================================================================
 export const UserListHandler = async () => {
+    // Instanciamos el repositorio transaccional para la entidad 'users'
     const userRepo = createRepository('users');
+    // Obtenemos el elemento contenedor donde se renderizará el listado de usuarios
     const tableContainer = document.getElementById('users-table-container');
 
+    // Salida temprana si el contenedor no existe en la vista actual
     if (!tableContainer) return;
 
+    // Declaramos variables de estado locales para la vista de usuarios
+    let currentUsers = [];
     let currentPage = 1;
     const itemsPerPage = 10;
     let currentSearchTerm = '';
+    let currentRole = '';
 
+    // Función auxiliar para refrescar el contenido llamando a la carga paginada
     const refreshView = async () => {
-        await loadAndRenderUsers(
+        currentUsers = await loadAndRenderUsers(
             userRepo, 
             tableContainer, 
             currentPage, 
             itemsPerPage, 
-            currentSearchTerm
+            currentSearchTerm,
+            currentRole
         );
     };
 
+    // Removemos suscripciones previas para evitar llamadas duplicadas por cambios de enrutador
+    if (window.userFiltersChangedListener) {
+        document.removeEventListener('user-filters-changed', window.userFiltersChangedListener);
+    }
+
+    // Definimos el callback cuando cambien los inputs del filtro
+    window.userFiltersChangedListener = async (e) => {
+        // Extraemos las nuevas opciones de filtro desde el detalle del evento
+        const { searchTerm, roleName } = e.detail;
+        currentSearchTerm = searchTerm;
+        currentRole = roleName;
+        // Reiniciamos la visualización a la página uno al realizar una nueva búsqueda
+        currentPage = 1;
+        // Refrescamos la vista con los nuevos datos filtrados
+        await refreshView();
+    };
+
+    // Escuchamos el evento de cambio de filtros lanzado desde la interfaz
+    document.addEventListener('user-filters-changed', window.userFiltersChangedListener);
+
+    // Ejecutamos la carga inicial de datos paginados al entrar a la sección
     await refreshView();
 
+    // Registramos un manejador de eventos click por delegación dentro del contenedor de la tabla
     tableContainer.addEventListener('click', async (e) => {
-        
-        // --- Intercepción del Paginador ---
+        // Identificamos si se hizo click en un botón de navegación de página
         const btnPaginate = e.target.closest('button[data-action="paginate"]');
         if (btnPaginate && !btnPaginate.disabled) {
+            // Convertimos a entero el número de página guardado en el dataset del botón
             const newPage = parseInt(btnPaginate.dataset.page, 10);
             if (!isNaN(newPage)) {
+                // Actualizamos la página activa del estado
                 currentPage = newPage;
+                // Cargamos y mostramos la página de datos correspondiente
                 await refreshView();
             }
             return;
         }
-
-        // --- Trigger de Eliminación ---
+        
+        // Identificamos si se hizo click en un botón de eliminación de usuario
         const btnDelete = e.target.closest('button[data-action="delete"]');
-        if (btnDelete && !btnDelete.disabled) {
+        if (btnDelete) {
+            // Ejecutamos la lógica transaccional de borrado y actualizamos al terminar
             await handleDeleteUser(btnDelete, userRepo, refreshView);
             return;
         }
     });
-};
+};

@@ -4,9 +4,19 @@ import { saleState } from './sale.state.js';
 import { UI } from './sale.ui.js';
 import { SearchService } from './sale.search.js';
 
+const checkSaveButtonStatus = () => {
+    const hasProducts = saleState.cart.length > 0;
+    const hasClient = !!saleState.client; // Evalúa si existe el objeto cliente
+    
+    // El botón se deshabilita si falta alguno de los dos
+    UI.elements.btnSave.disabled = !(hasProducts && hasClient);
+};
+
 export const SaleCreateHandler = () => {
     // 1. Inicialización
     if (!UI.init()) return;
+
+    checkSaveButtonStatus();
 
     const saleRepo = createRepository('sales'); 
     const clientRepo = createRepository('clients');
@@ -42,6 +52,8 @@ export const SaleCreateHandler = () => {
             UI.modals.close('client-modal');
             UI.elements.searchClientInput.value = '';
             UI.elements.clientSearchResults.innerHTML = '';
+
+            checkSaveButtonStatus();
             return;
         }
 
@@ -66,6 +78,8 @@ export const SaleCreateHandler = () => {
             UI.modals.close('product-modal');
             UI.elements.searchProductInput.value = '';
             UI.elements.productSearchResults.innerHTML = '';
+
+            checkSaveButtonStatus();
             return;
         }
 
@@ -83,27 +97,42 @@ export const SaleCreateHandler = () => {
             }
             
             UI.updateCart(saleState.cart, saleState.total);
+
+            checkSaveButtonStatus();
             return;
         }
 
         // Desvincular Cliente
         if (e.target.closest('#btn-remove-client')) {
             saleState.removeClient();
+            checkSaveButtonStatus();
             UI.updateClient(null);
         }
     });
 
     // ============================================================================
-    // 4. FLUJO DE FACTURACIÓN (Envío Transaccional)
+    // 4. FLUJO DE FACTURACIÓN (Confirmación + Envío Transaccional)
     // ============================================================================
-    UI.elements.btnSave.addEventListener('click', async () => {
-        if (saleState.cart.length === 0) return;
 
+    // 4.1. Al presionar "Procesar Factura" ya no se envía de inmediato:
+    // se valida y se abre el modal de confirmación con el resumen de la venta.
+    UI.elements.btnSave.addEventListener('click', () => {
+        if (saleState.cart.length === 0 || !saleState.client){
+            alert("Debe estar asignado un cliente y un producto para proceder con la compra");
+            return
+        };
+
+        UI.renderConfirmSummary(saleState.client, saleState.cart, saleState.total);
+        UI.modals.open('sale-confirm-modal');
+    });
+
+    // 4.2. Solo al confirmar dentro del modal se ejecuta la transacción real.
+    UI.elements.btnConfirmSale.addEventListener('click', async () => {
         const payload = saleState.getPayload();
 
-        const originalText = UI.elements.btnSave.innerHTML;
-        UI.elements.btnSave.disabled = true;
-        UI.elements.btnSave.innerHTML = '<i class="ri-loader-4-line animate-spin"></i> Procesando...';
+        const originalText = UI.elements.btnConfirmSale.innerHTML;
+        UI.elements.btnConfirmSale.disabled = true;
+        UI.elements.btnConfirmSale.innerHTML = '<i class="ri-loader-4-line animate-spin"></i> Procesando...';
 
         try {
             const response = await saleRepo.create(payload);
@@ -113,15 +142,18 @@ export const SaleCreateHandler = () => {
                 saleState.removeClient();
                 UI.updateCart([], 0);
                 UI.updateClient(null);
-                
+                UI.modals.close('sale-confirm-modal');
+
                 alert("✅ Transacción registrada con éxito.");
             }
         } catch (error) {
+
             console.error("Fallo en la transacción:", error);
             alert("❌ Ocurrió un error al registrar la venta. Revise su conexión.");
         } finally {
-            UI.elements.btnSave.disabled = saleState.cart.length === 0;
-            UI.elements.btnSave.innerHTML = originalText;
+            checkSaveButtonStatus();
+            UI.elements.btnConfirmSale.disabled = false;
+            UI.elements.btnConfirmSale.innerHTML = originalText;
         }
     });
 };

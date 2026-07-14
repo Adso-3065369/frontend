@@ -1,6 +1,6 @@
 import { createRepository } from '@/repositories';
 import { DataTable, Link, Button, Pagination, Badge } from '@/components/ui';
-import { RenderIf } from '@/utils';
+import { RenderIf, debounce } from '@/utils';
 
 /**
  * @file ClientListHandler.js
@@ -80,18 +80,56 @@ const clientColumns = [
 // ============================================================================
 // 2. FASE DE CARGA DE DATOS Y RENDERIZADO (Server-Side Pagination & Search)
 // ============================================================================
+// Límite alto para poder filtrar en el cliente por teléfono/email sin perder
+// registros que el backend no indexe en su búsqueda por defecto.
+const CLIENT_SEARCH_FETCH_LIMIT = 1000;
+
+// Determina si un cliente coincide con el término buscado,
+// comparando documento, nombre, correo y teléfono (case-insensitive).
+const clientMatchesSearch = (client, term) => {
+    const normalizedTerm = term.toLowerCase();
+    return [
+        client.document_number,
+        client.name,
+        client.email,
+        client.phone
+    ].some((field) => (field || '').toString().toLowerCase().includes(normalizedTerm));
+};
+
 const loadAndRenderClients = async (clientRepo, tableContainer, page = 1, limit = 10, search = '') => {
     try {
-        const searchParam = search ? `&search=${encodeURIComponent(search)}` : '';
-        const queryString = `?page=${page}&limit=${limit}${searchParam}`;
-        
-        const response = await clientRepo.getAll(queryString);
-        
-        // Desempaquetado dual defensivo frente a envoltorios HTTP/Axios
-        const payload = response.data || response;
-        const clients = Array.isArray(payload) ? payload : (payload.data || []);
-        const meta = payload.meta || null;
-        
+        let clients;
+        let meta;
+
+        if (search) {
+            const response = await clientRepo.getAll(`?limit=${CLIENT_SEARCH_FETCH_LIMIT}`);
+            const payload = response.data || response;
+            const allClients = Array.isArray(payload) ? payload : (payload.data || []);
+            const filtered = allClients.filter((client) => clientMatchesSearch(client, search));
+
+            const totalItems = filtered.length;
+            const lastPage = Math.max(1, Math.ceil(totalItems / limit));
+            const resolvedPage = Math.min(page, lastPage);
+            const start = (resolvedPage - 1) * limit;
+            
+            clients = filtered.slice(start, start + limit);
+            
+            meta = {
+                currentPage: resolvedPage,
+                lastPage,
+                totalItems,
+                prevPage: resolvedPage > 1 ? resolvedPage - 1 : null,
+                nextPage: resolvedPage < lastPage ? resolvedPage + 1 : null
+            };
+
+        } else {
+            const queryString = `?page=${page}&limit=${limit}`;
+            const response = await clientRepo.getAll(queryString);
+            const payload = response.data || response;
+            clients = Array.isArray(payload) ? payload : (payload.data || []);
+            meta = payload.meta || null;
+        }
+
         const tableHtml = DataTable({
             columns: clientColumns,
             data: clients,
@@ -149,6 +187,8 @@ const handleDeleteClient = async (btnElement, clientRepo, refreshCallback) => {
 export const ClientListHandler = async () => {
     const clientRepo = createRepository('clients');
     const tableContainer = document.getElementById('clients-table-container');
+    const searchInput = document.getElementById('client-search-input');
+    const clearSearchBtn = document.getElementById('client-search-clear');
 
     if (!tableContainer) return;
 
@@ -166,6 +206,48 @@ export const ClientListHandler = async () => {
             currentSearchTerm
         );
     };
+
+    const toggleClearButton = () => {
+        if (!clearSearchBtn) return;
+        clearSearchBtn.classList.toggle('hidden', currentSearchTerm.length === 0);
+    };
+
+    const debouncedSearch = debounce(async (term) => {
+        currentSearchTerm = term.trim();
+        currentPage = 1; // Toda nueva búsqueda reinicia la paginación
+        toggleClearButton();
+        await refreshView();
+    }, 400);
+
+    if (searchInput) {
+        currentSearchTerm = searchInput.value.trim();
+        toggleClearButton();
+
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value;
+
+            if (term.trim() === '') {
+                currentSearchTerm = '';
+                currentPage = 1;
+                toggleClearButton();
+                refreshView();
+                return;
+            }
+
+            debouncedSearch(term);
+        });
+    }
+
+    if (clearSearchBtn) {
+        clearSearchBtn.addEventListener('click', () => {
+            if (searchInput) searchInput.value = '';
+            currentSearchTerm = '';
+            currentPage = 1;
+            toggleClearButton();
+            refreshView();
+            searchInput?.focus();
+        });
+    }
 
     // Carga inicial de la vista
     await refreshView();

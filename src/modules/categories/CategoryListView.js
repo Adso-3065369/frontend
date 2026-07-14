@@ -1,11 +1,23 @@
 import { Link } from '@/components/ui';
 import { RenderIf } from '@/utils';
+import { CategoryFilter } from './components/CategoryFilter.js';
 
 /**
  * @file CategoryListView.js
  * @description Interfaz para el listado de categorías adaptada al patrón de componentes dinámicos.
  */
 export const CategoryListView = async () => {
+    // Generamos el componente de filtros de categoría pasando un callback que se ejecuta al escribir
+    const filterHtml = CategoryFilter((searchTerm) => {
+        // Instanciamos un evento personalizado para propagar que los filtros de categoría han cambiado
+        const event = new CustomEvent('category-filters-changed', {
+            // Guardamos el término de búsqueda de texto dentro del detalle del evento
+            detail: { searchTerm }
+        });
+        // Lanzamos el evento a nivel de documento para ser escuchado en el orquestador de categorías
+        document.dispatchEvent(event);
+    });
+
     return `
         <div class="p-6 space-y-6">
             <div class="sm:flex sm:items-center sm:justify-between">
@@ -24,6 +36,9 @@ export const CategoryListView = async () => {
                     )}
                 </div>
             </div>
+
+            <!-- Filtro de Búsqueda de Categorías -->
+            ${filterHtml}
 
             <div id="categories-table-container" class="app-card overflow-hidden">
                 <div class="px-6 py-12 text-center text-text-secondary italic">

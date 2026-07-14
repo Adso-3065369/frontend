@@ -144,7 +144,7 @@ export const CategoryListHandler = async () => {
     // Control de Estado Local
     let currentPage = 1;
     const itemsPerPage = 10;
-    let currentSearchTerm = ''; // Expandible si implementa un input de búsqueda en la UI
+    let currentSearchTerm = ''; // Almacena el término ingresado en el buscador
 
     const refreshView = async () => {
         await loadAndRenderCategories(
@@ -155,6 +155,25 @@ export const CategoryListHandler = async () => {
             currentSearchTerm
         );
     };
+
+    // Removemos suscripciones previas para evitar llamadas duplicadas por cambios de enrutador
+    if (window.categoryFiltersChangedListener) {
+        document.removeEventListener('category-filters-changed', window.categoryFiltersChangedListener);
+    }
+
+    // Definimos el callback cuando cambien los inputs del filtro
+    window.categoryFiltersChangedListener = async (e) => {
+        // Extraemos el nuevo término de búsqueda desde el detalle del evento
+        const { searchTerm } = e.detail;
+        currentSearchTerm = searchTerm;
+        // Reiniciamos la visualización a la página uno al realizar una nueva búsqueda
+        currentPage = 1;
+        // Refrescamos la vista con los nuevos datos filtrados
+        await refreshView();
+    };
+
+    // Escuchamos el evento de cambio de filtros lanzado desde la interfaz
+    document.addEventListener('category-filters-changed', window.categoryFiltersChangedListener);
 
     // Renderizado base inicial
     await refreshView();

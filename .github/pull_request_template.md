@@ -13,7 +13,7 @@
 ---
 
 ## Checklist de Calidad Universal
-- [ ] [cite_start]**Sincronización:** He actualizado mi rama con `origin/develop` y resolví conflictos[cite: 19].
+- [ ] **Sincronización:** He actualizado mi rama con `origin/develop` y resolví conflictos.
 - [ ] **Limpieza:** Sin `console.log`, comentarios de prueba o archivos `.env`.
 - [ ] **Estándares:** Uso de JSDoc para funciones y nombres de variables en camelCase.
 
