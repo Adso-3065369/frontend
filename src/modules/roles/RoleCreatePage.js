@@ -10,7 +10,7 @@ export const RoleCreatePage = async () => {
     return `
         <div class="p-6 max-w-5xl mx-auto space-y-6">
             <div class="flex items-center gap-4 mb-8 w-full">
-                 ${Link({
+                ${Link({
                     href: '#/roles',
                     variant: 'outline-secondary',
                     icon: '<i class="ri-arrow-left-line"></i>',
@@ -29,6 +29,7 @@ export const RoleCreatePage = async () => {
                     <div class="col-span-1">
                         ${Label({
                             text:'Nombre del Rol',
+                            htmlFor:'roleName'
                         })}
                         ${Input({
                             id: 'roleName',
