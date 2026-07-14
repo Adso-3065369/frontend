@@ -238,3 +238,59 @@
   overflow: hidden;
   white-space: nowrap;
 }
+
+/* =========================================
+   7. MEJORA DEL MÓDULO DE CATEGORÍAS (Tooltip & Deshabilitado)
+   ========================================= */
+/* Botón de eliminación deshabilitado visualmente */
+.category-delete-disabled {
+  background-color: rgba(239, 68, 68, 0.05) !important;
+  border-color: rgba(239, 68, 68, 0.15) !important;
+  color: rgba(239, 68, 68, 0.4) !important;
+  cursor: not-allowed !important;
+  pointer-events: auto !important; /* Mantiene activos los eventos de ratón */
+  transition: all 0.2s ease-in-out !important;
+}
+.category-delete-disabled:hover {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+  color: rgba(239, 68, 68, 0.7) !important;
+}
+/* Tooltip personalizado */
+.category-tooltip {
+  position: absolute;
+  z-index: 9999;
+  background-color: rgba(31, 31, 31, 0.95);
+  backdrop-filter: blur(10px);
+  color: #f8fafc;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 
+              0 0 12px color-mix(in srgb, var(--primary) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
+              transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+.category-tooltip.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* Flecha del tooltip */
+.category-tooltip-arrow {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: #1f1f1f;
+  border-left: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+  transform: rotate(-45deg);
+  bottom: -5px;
+  left: calc(50% - 4px);
+}

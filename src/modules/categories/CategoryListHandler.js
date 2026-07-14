@@ -54,10 +54,13 @@ const categoryColumns = [
                     Button({
                         variant: 'danger',
                         icon: '<i class="ri-delete-bin-line"></i>',
-                        className: 'w-8 h-8 p-0 flex items-center justify-center',
-                        title: category.has_products ? 'No se puede eliminar (Tiene productos)' : 'Eliminar Categoría',
-                        disabled: category.has_products,
-                        dataset: { action: 'delete', id: category.id }
+                        className: `w-8 h-8 p-0 flex items-center justify-center ${category.hasLinkedProducts ? 'category-delete-disabled' : ''}`,
+                        title: category.hasLinkedProducts ? '' : 'Eliminar Categoría',
+                        disabled: false,
+                        dataset: { 
+                            action: category.hasLinkedProducts ? 'delete-disabled' : 'delete', 
+                            id: category.id 
+                        }
                     })
                 )}
             </div>
@@ -178,6 +181,56 @@ export const CategoryListHandler = async () => {
     // Renderizado base inicial
     await refreshView();
     
+    // Configuración de tooltip flotante global
+    let tooltipEl = document.getElementById('category-tooltip');
+    if (!tooltipEl) {
+        tooltipEl = document.createElement('div');
+        tooltipEl.id = 'category-tooltip';
+        tooltipEl.className = 'category-tooltip';
+        tooltipEl.innerHTML = 'No se puede eliminar: esta categoría tiene productos vinculados<div class="category-tooltip-arrow"></div>';
+        document.body.appendChild(tooltipEl);
+    }
+    
+    // Ocultar al iniciar/refrescar la vista para evitar estados huérfanos
+    tooltipEl.classList.remove('visible');
+    tooltipEl.style.display = 'none';
+
+    // Manejador del hover para tooltips en los botones deshabilitados
+    tableContainer.addEventListener('mouseover', (e) => {
+        const btnDeleteDisabled = e.target.closest('button[data-action="delete-disabled"]');
+        if (btnDeleteDisabled) {
+            tooltipEl.style.display = 'block';
+            
+            const rect = btnDeleteDisabled.getBoundingClientRect();
+            const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            const tooltipRect = tooltipEl.getBoundingClientRect();
+            
+            const x = rect.left + scrollLeft + (rect.width / 2) - (tooltipRect.width / 2);
+            const y = rect.top + scrollTop - tooltipRect.height - 8;
+            
+            tooltipEl.style.left = `${x}px`;
+            tooltipEl.style.top = `${y}px`;
+            
+            requestAnimationFrame(() => {
+                tooltipEl.classList.add('visible');
+            });
+        }
+    });
+
+    tableContainer.addEventListener('mouseout', (e) => {
+        const btnDeleteDisabled = e.target.closest('button[data-action="delete-disabled"]');
+        if (btnDeleteDisabled && (!e.relatedTarget || !btnDeleteDisabled.contains(e.relatedTarget))) {
+            tooltipEl.classList.remove('visible');
+            setTimeout(() => {
+                if (!tooltipEl.classList.contains('visible')) {
+                    tooltipEl.style.display = 'none';
+                }
+            }, 200);
+        }
+    });
+
     // Delegación centralizada de eventos (DOM Injection pattern)
     tableContainer.addEventListener('click', async (e) => {
         
@@ -196,6 +249,13 @@ export const CategoryListHandler = async () => {
         const btnDelete = e.target.closest('button[data-action="delete"]');
         if (btnDelete && !btnDelete.disabled) {
             await handleHardDelete(btnDelete, categoryRepo, refreshView);
+            return;
+        }
+
+        // --- EVENTO: Intento de Eliminar Deshabilitado ---
+        const btnDeleteDisabled = e.target.closest('button[data-action="delete-disabled"]');
+        if (btnDeleteDisabled) {
+            alert("No se puede eliminar: esta categoría tiene productos vinculados");
             return;
         }
     });
