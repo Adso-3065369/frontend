@@ -1,4 +1,4 @@
-import { Input, Button, Link, Badge, Textarea } from '@/components/ui';
+import { Input, Button, Link, Badge, Textarea, Label } from '@/components/ui';
 
 /**
  * @file RoleCreatePage.js
@@ -18,8 +18,10 @@ export const RoleCreatePage = async () => {
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="col-span-1">
+                        ${Label({
+                            text:'Nombre del Rol',
+                        })}
                         ${Input({
-                            label: 'Nombre del Rol',
                             id: 'roleName',
                             name: 'roleName',
                             placeholder: 'Ej. Administrador, Cajero, Supervisor...'
@@ -27,8 +29,11 @@ export const RoleCreatePage = async () => {
                     </div>
                     
                     <div class="col-span-1 md:col-span-2">
+                        ${Label({
+                            text: 'Descripción del Rol',
+                            htmlFor: 'description'
+                        })}
                         ${Textarea({
-                            label: 'Descripción del Rol',
                             id: 'description',
                             name: 'description',
                             placeholder: 'Ej. Perfil con acceso total a los módulos de ventas e inventario...'
@@ -41,7 +46,9 @@ export const RoleCreatePage = async () => {
                         <label class="block text-sm font-bold text-white">
                             Permisos del Sistema
                         </label>
-                        
+                        ${Label({
+                            text: 'Permiso del Sistema',
+                        })}
                         ${Badge({
                             text: 'Requerido: Mínimo 1 permiso',
                             variant: 'brand',
