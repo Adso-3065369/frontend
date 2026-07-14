@@ -8,9 +8,18 @@ import { Input, Button, Link, Badge, Textarea } from '@/components/ui';
 export const RoleEditPage = async () => {
     return `
         <div class="p-6 max-w-5xl mx-auto space-y-6">
-            <div class="mb-8">
+            <div class="flex items-center gap-4 mb-8 w-full">
+                 ${Link({
+                    href: '#/roles',
+                    variant: 'outline-secondary',
+                    icon: '<i class="ri-arrow-left-line"></i>',
+                    size: 'sm',
+                    className: 'w-8 h-8 p-0 flex items-center justify-center'
+                })}
+                <div>
                 <h1 class="text-2xl font-black text-white">Editar Rol</h1>
                 <p class="text-sm text-text-secondary">Modifique el nombre o los privilegios asignados a este perfil.</p>
+                </div>
             </div>
 
             <form id="form-edit-role" class="app-card space-y-8">

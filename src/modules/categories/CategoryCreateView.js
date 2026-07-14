@@ -7,9 +7,18 @@ import { Input, Button, Link } from '@/components/ui';
 export const CategoryCreateView = async () => {
     return `
         <div class="p-6 max-w-2xl mx-auto space-y-6">
-            <div>
+            <div class="flex items-center gap-4 mb-8 w-full">
+                 ${Link({
+                    href: '#/categorias',
+                    variant: 'outline-secondary',
+                    icon: '<i class="ri-arrow-left-line"></i>',
+                    size: 'sm',
+                    className: 'w-8 h-8 p-0 flex items-center justify-center'
+                })}
+                <div>
                 <h1 class="text-2xl font-black text-white">Nueva Categoría</h1>
                 <p class="text-sm text-text-secondary">Registre una nueva clasificación para organizar sus productos.</p>
+                </div>
             </div>
 
             <form novalidate id="form-create-category" class="app-card space-y-6">

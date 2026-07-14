@@ -7,10 +7,20 @@ import { Input, Select, Button, Link, Label     } from '@/components/ui';
 export const ProductCreateView = async () => {
     return `
         <div class="p-6 max-w-3xl mx-auto space-y-6">
-            <div>
+            <div class="flex items-center gap-4 mb-8 w-full">
+                 ${Link({
+                    href: '#/productos',
+                    variant: 'outline-secondary',
+                    icon: '<i class="ri-arrow-left-line"></i>',
+                    size: 'sm',
+                    className: 'w-8 h-8 p-0 flex items-center justify-center'
+                })}
+                <div>
                 <h1 class="text-2xl font-black text-white">Nuevo Producto</h1>
                 <p class="text-sm text-text-secondary">Complete los datos para añadir un artículo al catálogo.</p>
+                </div>
             </div>
+            
 
             <form novalidate id="form-create-product" class="app-card space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
