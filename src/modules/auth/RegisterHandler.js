@@ -149,6 +149,34 @@ export const RegisterHandler = async () => {
 
     if (!form) return;
 
+    // Control de visibilidad de contraseñas
+    const setupPasswordToggle = (inputId, buttonId) => {
+        const toggleBtn = document.getElementById(buttonId);
+        const passwordInput = document.getElementById(inputId);
+        if (toggleBtn && passwordInput) {
+            toggleBtn.addEventListener('click', () => {
+                const isPassword = passwordInput.getAttribute('type') === 'password';
+                passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+                
+                const icon = toggleBtn.querySelector('i');
+                if (icon) {
+                    if (isPassword) {
+                        icon.classList.remove('ri-eye-line');
+                        icon.classList.add('ri-eye-off-line');
+                        toggleBtn.setAttribute('aria-label', 'Ocultar contraseña');
+                    } else {
+                        icon.classList.remove('ri-eye-off-line');
+                        icon.classList.add('ri-eye-line');
+                        toggleBtn.setAttribute('aria-label', 'Mostrar contraseña');
+                    }
+                }
+            });
+        }
+    };
+
+    setupPasswordToggle('password', 'btn-toggle-password');
+    setupPasswordToggle('passwordConfirm', 'btn-toggle-passwordConfirm');
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 

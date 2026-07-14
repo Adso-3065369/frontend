@@ -152,6 +152,7 @@ export function Input({
   const resolvedVariant = variants[variant] ?? variants["primary"];
   const resolvedSize    = sizes[size]       ?? sizes["md"];
 
+  const finalClasses = `${baseClasses} ${resolvedVariant} ${resolvedSize} ${errorClasses} ${className}`.trim();
   const finalClasses = `${baseClasses} ${resolvedVariant} ${resolvedSize} ${errorClasses} ${extraClasses}`.trim();
 
 
@@ -173,20 +174,41 @@ export function Input({
       </label>`
     : "";
 
-  return `
-    ${labelHTML}
+  const inputHTML = `
     <input
       ${idAttr}
       type="${type}"
       ${idAttr}
       name="${name}"
       placeholder="${placeholder}"
-      class="${finalClasses}"
+      class="${finalClasses} ${type === 'password' ? 'pr-10' : ''}"
       ${requiredAttr}
       ${ariaInvalid}
       ${ariaDisabled}
       ${disabledAttr}
       ${dataAttrs}
     />
+  `.trim();
+
+  if (type === 'password') {
+    return `
+      ${labelHTML}
+      <div class="relative w-full">
+        ${inputHTML}
+        <button
+          type="button"
+          class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white transition-colors duration-200 focus:outline-none"
+          id="btn-toggle-${id || name || 'password'}"
+          aria-label="Mostrar contraseña"
+        >
+          <i class="ri-eye-line text-lg" id="icon-toggle-${id || name || 'password'}"></i>
+        </button>
+      </div>
+    `.trim();
+  }
+
+  return `
+    ${labelHTML}
+    ${inputHTML}
   `.trim();
 }

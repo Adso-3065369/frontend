@@ -94,22 +94,28 @@ export const LoginHandler = async () => {
 
     if (!form) return;
 
-    // Toggle visibilidad de contraseña
-    const toggleBtn = document.getElementById('toggle-login-password');
-    if (toggleBtn) {
+    // Control de visibilidad de contraseña
+    const toggleBtn = document.getElementById('btn-toggle-password');
+    const passwordInput = document.getElementById('password');
+    if (toggleBtn && passwordInput) {
         toggleBtn.addEventListener('click', () => {
-            const input = document.getElementById('password');
+            const isPassword = passwordInput.getAttribute('type') === 'password';
+            passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+            
             const icon = toggleBtn.querySelector('i');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.replace('ri-eye-line', 'ri-eye-off-line');
-            } else {
-                input.type = 'password';
-                icon.classList.replace('ri-eye-off-line', 'ri-eye-line');
+            if (icon) {
+                if (isPassword) {
+                    icon.classList.remove('ri-eye-line');
+                    icon.classList.add('ri-eye-off-line');
+                    toggleBtn.setAttribute('aria-label', 'Ocultar contraseña');
+                } else {
+                    icon.classList.remove('ri-eye-off-line');
+                    icon.classList.add('ri-eye-line');
+                    toggleBtn.setAttribute('aria-label', 'Mostrar contraseña');
+                }
             }
         });
     }
-
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
