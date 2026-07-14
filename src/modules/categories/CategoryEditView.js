@@ -8,7 +8,7 @@ export const CategoryEditView = async () => {
     return `
         <div class="p-6 max-w-2xl mx-auto space-y-6">
         <div class="flex items-center gap-4 mb-8 w-full">
-                 ${Link({
+                ${Link({
                     href: '#/categorias',
                     variant: 'outline-secondary',
                     icon: '<i class="ri-arrow-left-line"></i>',
@@ -24,6 +24,7 @@ export const CategoryEditView = async () => {
             <form novalidate id="form-edit-category" class="app-card space-y-6">
                 ${Label({
                     text:  'Nombre de la Categoría',
+                    htmlFor:'categoryName'
                 })}
                 ${Input({
                     type: 'text',

@@ -14,7 +14,7 @@ export const RoleListPage = async () => {
                     <p class="mt-2 text-sm text-text-secondary">Administre los perfiles de acceso y la cantidad de permisos asignados a cada uno.</p>
                 </div>
                 <div class="mt-4 sm:mt-0">
-                 ${RenderIf('roles.create',
+                ${RenderIf('roles.create',
                     Link({
                         href: '#/roles/nuevo',
                         text: 'Nuevo Rol',

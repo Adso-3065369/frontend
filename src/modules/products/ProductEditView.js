@@ -30,6 +30,7 @@ export const ProductEditView = async () => {
                     <div class="md:col-span-1">
                         ${Label({
                             text:'Código SKU',
+                            htmlFor:'productCode' 
                         })}
                         ${Input({
                             id: 'productCode',
@@ -42,6 +43,7 @@ export const ProductEditView = async () => {
                     <div class="md:col-span-1">
                         ${Label({
                             text:  'Nombre del Producto',
+                            htmlFor:'productName' 
                         })}
                         ${Input({
                             id: 'productName',
@@ -54,6 +56,7 @@ export const ProductEditView = async () => {
                     <div class="md:col-span-1">
                         ${Label({
                             text:  'Precio Unitario ($)',
+                            htmlFor: 'productPrice'
                         })}
                         ${Input({
                             type: 'number',
@@ -68,6 +71,7 @@ export const ProductEditView = async () => {
                     <div class="md:col-span-1">
                         ${Label({
                             text:'Stock Actual',
+                            htmlFor:'productStock' 
                         })}
                         ${Input({
                             type: 'number',
@@ -82,6 +86,7 @@ export const ProductEditView = async () => {
                     <div id="category-select-container" class="md:col-span-2">
                         ${Label({
                             text:  'Categoría',
+                            htmlFor:'productCategory' 
                         })}
                         ${Select({
                             id: 'productCategory',

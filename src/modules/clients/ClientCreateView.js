@@ -28,6 +28,7 @@ export const ClientCreateView = async () => {
                     <div class="space-y-2">
                         ${Label({
                             text:'Número de Documento',
+                            htmlFor:'document_number' 
                         })}
                         ${Input({
                             type:  'text',
@@ -41,6 +42,7 @@ export const ClientCreateView = async () => {
                     <div class="space-y-2">
                         ${Label({
                             text:'Nombre Completo / Razón Social',
+                            htmlFor:'name' 
                         })}
                         ${Input({
                             type: 'text',
@@ -54,6 +56,7 @@ export const ClientCreateView = async () => {
                     <div class="space-y-2">
                         ${Label({
                             text:'Correo Electrónico',
+                            htmlFor: 'email'
                         })}
                         ${Input({
                             type: 'email',
@@ -67,6 +70,7 @@ export const ClientCreateView = async () => {
                     <div class="space-y-2">
                         ${Label({
                             text: 'Teléfono de Contacto',
+                            htmlFor:'phone' 
                         })}
                         ${Input({
                             type: 'tel',
