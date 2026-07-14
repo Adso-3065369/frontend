@@ -217,7 +217,7 @@ export const ProductListHandler = async () => {
   let currentSearchTerm = '';
   let currentSortBy = 'name';
   let currentSortOrder = 'ASC';
-};
+
 
   const refreshView = async () => {
     currentProducts = await loadAndRenderProducts(
@@ -230,9 +230,10 @@ export const ProductListHandler = async () => {
       currentSortOrder
     );
   };
+
   
   await refreshView();
-
+};
   /**
   * Evento que detecta el cambio en el selector de ordenamiento.
   *
@@ -242,16 +243,16 @@ export const ProductListHandler = async () => {
   * nuevo criterio de ordenamiento.
   */
   
-sortSelect?.addEventListener('change', async(e) => {
-
-    const [sortBy, sortOrder] = e.target.value.split('-');
-
-    currentSortBy = sortBy;
-    currentSortOrder = sortOrder;
-
-    currentPage = 1;
-
-    await refreshView();
+ 
+ const [sortBy, sortOrder] = e.target.value.split('-');
+ 
+ currentSortBy = sortBy;
+ currentSortOrder = sortOrder;
+ 
+ currentPage = 1;
+ 
+ await refreshView();
+ sortSelect?.addEventListener('change', async(e) => {
     tableContainer.addEventListener('click', async (e) => {
         const btnPaginate = e.target.closest('button[data-action="paginate"]');
         if (btnPaginate && !btnPaginate.disabled) {
