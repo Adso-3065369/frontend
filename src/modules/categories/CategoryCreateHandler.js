@@ -71,9 +71,7 @@ export const CategoryCreateHandler = async () => {
             categoryName: {
                 required: true,
                 minLength: 3,
-                message: 'El nombre de la categoría es obligatorio y debe tener al menos 3 caracteres.',
-                pattern: /^(?=.*[a-zA-ZáéíóúÁÉÍÓÚñÑ]).+$/,
-                patternMessage: 'El nombre de la categoría no puede contener solo números.'
+                message: 'El nombre de la categoría es obligatorio y debe tener al menos 3 caracteres.'
             }
         };
 
