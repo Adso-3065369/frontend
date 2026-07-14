@@ -29,6 +29,7 @@ export const RoleEditPage = async () => {
                         <div class="col-span-1">
                             ${Label({
                                 text:'Nombre del Rol',
+                                htmlFor:'roleName' 
                             })}
                             ${Input({
                                 id: 'roleName',
@@ -41,6 +42,7 @@ export const RoleEditPage = async () => {
                         <div class="col-span-1 md:col-span-2">
                             ${Label({
                                 text:'Descripción del Rol',
+                                htmlFor:'description'
                             })}
                             ${Textarea({
                                 id: 'description',
