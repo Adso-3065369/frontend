@@ -3,6 +3,7 @@
  * @description Componente atómico contenedor. Centraliza la estructura base de las superficies del sistema.
  * Implementa el patrón de diseño por variantes.
  * @param {Object} props - Diccionario de parámetros de configuración del componente.
+ * @param {string} [props.id=''] - Id que se le puede dar a la Card de modo que se le puedan meter estilos dinamicos
  * @param {string} [props.children=''] - Contenido en formato de cadena HTML a inyectar dentro del cuerpo de la tarjeta.
  * @param {'default'|'solid'|'interactive'} [props.variant='default'] - Define la paleta de colores, sombras y comportamiento de interacción (ej. hover) del contenedor.
  * @param {string} [props.className=''] - Cadena con clases CSS adicionales (Tailwind) aplicadas al contenedor principal exterior.
@@ -10,6 +11,7 @@
  * @returns {string} Cadena de texto con el marcado HTML compilado (`<div class="...">...</div>`) listo para su inyección en el DOM.
  */
 export const Card = ({
+    id = '',
     children = '',
     variant = 'default',   // default, solid, interactive
     className = '',        // Clases adicionales para el contenedor principal
@@ -37,10 +39,11 @@ export const Card = ({
 
     // 6. Renderizado del elemento HTML
     return `
-        <div class="${finalClasses}">
+        <div id=${id} class="${finalClasses}">
             <div class="${finalBodyClasses}">
                 ${children}
             </div>
         </div>
     `;
+
 };
