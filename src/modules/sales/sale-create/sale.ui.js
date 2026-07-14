@@ -102,7 +102,7 @@ export const UI = {
                 render: (item) => `
                     <div class="flex items-center justify-center gap-1">
                         ${Button({ variant: 'ghost', className: '!p-0.5 text-gray-400 hover:text-white', icon: '<i class="ri-subtract-line"></i>', dataset: { action: 'decrease', id: item.product_id } })}
-                        <span class="w-6 sm:w-8 text-center text-white font-mono bg-bg-base border border-gray-700 rounded py-0.5 text-sm">${item.quantity}</span>
+                        <input type="text" class="w-6 sm:w-8 text-center text-white font-mono bg-bg-base border border-gray-700 rounded py-0.5 text-sm" value = "${item.quantity}" disabled>
                         ${Button({ variant: 'ghost', className: '!p-0.5 text-gray-400 hover:text-white', icon: '<i class="ri-add-line"></i>', dataset: { action: 'increase', id: item.product_id } })}
                     </div>
                 `

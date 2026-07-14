@@ -4,9 +4,12 @@
  * Soporta múltiples variantes visuales, tamaños, estados de error y deshabilitado,
  * delegación de eventos vía dataset y colores corporativos con prefijo `brand`.
  * @param {Object} props - Propiedades del componente.
+ * @param {string} [props.id=""] - Atributo `id` del input (y `for` del label asociado).
+ * @param {string} [props.label=""] - Texto de la etiqueta visible sobre el input. Si se omite, no se renderiza el label.
  * @param {string} [props.name=""] - Atributo `name` del input.
- * @param {"text"|"email"|"password"} [props.type="text"] - Tipo de input HTML.
+ * @param {"text"|"email"|"password"|"number"} [props.type="text"] - Tipo de input HTML.
  * @param {string} [props.placeholder=""] - Texto de marcador de posición.
+ * @param {boolean} [props.required=false] - Marca el campo como obligatorio (atributo HTML + asterisco en el label).
  * @param {"primary"|"secondary"|"danger"|"success"|"ghost"|"outline-primary"|"outline-secondary"|"outline-danger"|"outline-success"} [props.variant="primary"] - Variante visual del input.
  * @param {"sm"|"md"|"lg"} [props.size="md"] - Tamaño del input.
  * @param {boolean} [props.hasError=false] - Activa el estado visual de error.
@@ -15,9 +18,12 @@
  * @returns {string} Cadena de HTML válida que representa el componente Input.
  */
 export function Input({
+  id          = "",
+  label       = "",
   name        = "",
   type        = "text",
   placeholder = "",
+  required    = false,
   variant     = "primary",
   size        = "md",
   hasError    = false,
@@ -145,8 +151,10 @@ export function Input({
   const finalClasses = `${baseClasses} ${resolvedVariant} ${resolvedSize} ${errorClasses}`.trim();
 
   // ─── Bloque 5: Atributos HTML y dataset ───────────────────────────────────
-  const disabledAttr  = disabled  ? "disabled"          : "";
-  const ariaInvalid   = hasError  ? 'aria-invalid="true"' : "";
+  const idAttr        = id        ? `id="${id}"`           : "";
+  const requiredAttr  = required  ? "required"             : "";
+  const disabledAttr  = disabled  ? "disabled"             : "";
+  const ariaInvalid   = hasError  ? 'aria-invalid="true"'  : "";
   const ariaDisabled  = disabled  ? 'aria-disabled="true"' : "";
 
   const dataAttrs = Object.entries(dataset)
@@ -154,12 +162,21 @@ export function Input({
     .join(" ");
 
   // ─── Bloque 6: Retorno de HTML condicional ────────────────────────────────
+  const labelHTML = label
+    ? `<label ${id ? `for="${id}"` : ""} class="block text-sm font-medium text-text-primary mb-1">
+        ${label}${required ? ' <span class="text-red-500">*</span>' : ""}
+      </label>`
+    : "";
+
   return `
+    ${labelHTML}
     <input
       type="${type}"
+      ${idAttr}
       name="${name}"
       placeholder="${placeholder}"
       class="${finalClasses}"
+      ${requiredAttr}
       ${ariaInvalid}
       ${ariaDisabled}
       ${disabledAttr}
