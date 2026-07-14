@@ -4,7 +4,7 @@ import { RenderIf } from '@/utils';
 
 /**
  * @file SalesListHandler.js
- * @description Orquestador del listado de ventas con soporte para paginación desde el servidor.
+ * @description Orquestador del listado de ventas. 
  */
 
 // ============================================================================
@@ -91,16 +91,14 @@ const generatePaginationHtml = (meta) => {
                             variant: 'outline-secondary',
                             disabled: !meta.prevPage,
                             dataset: { action: 'paginate', page: meta.prevPage },
-                            // Se anula el borde derecho para unirlo al siguiente botón
                             className: 'rounded-r-none rounded-l-md focus:z-10 bg-gray-800/50'
                         })}
+
                         ${Button({
-                            // Se inyecta el ícono en el texto para mantenerlo a la derecha
                             text: 'Siguiente <i class="ri-arrow-right-s-line text-lg"></i>',
                             variant: 'outline-secondary',
                             disabled: !meta.nextPage,
                             dataset: { action: 'paginate', page: meta.nextPage },
-                            // Se anula el borde izquierdo para unirlo al botón anterior
                             className: 'rounded-l-none rounded-r-md focus:z-10 bg-gray-800/50'
                         })}
                     </nav>
@@ -117,33 +115,41 @@ export const SalesListHandler = async () => {
     const saleRepo = createRepository('sales');
     const tableContainer = document.getElementById('sales-table-container');
 
+    const searchInput = document.getElementById('search-input');
+    const dateInput = document.getElementById('date-input');
+    const clearBtn = document.getElementById('clear-filters-btn');
+
     if (!tableContainer) return;
 
-    // Estado local de la paginación
     let currentPage = 1;
     const itemsPerPage = 10;
 
     const loadAndRenderSales = async () => {
         try {
-            // Se envía la petición con los parámetros de paginación
-            const queryString = `?page=${currentPage}&limit=${itemsPerPage}`;
+            // 1. Extraemos los valores directamente de los inputs (Sin tocar la URL)
+            const searchValue = searchInput ? searchInput.value.trim() : '';
+            const dateValue = dateInput ? dateInput.value : '';
+
+            // 2. Construimos la Query String unificada para el backend
+            let queryString = `?page=${currentPage}&limit=${itemsPerPage}`;
+            if (searchValue) queryString += `&search=${encodeURIComponent(searchValue)}`;
+            if (dateValue) queryString += `&date=${encodeURIComponent(dateValue)}`;
+
+            // Enviamos la petición
             const response = await saleRepo.getAll(queryString);
             
-            // Desempaquetado dual: cliente HTTP + estructura del controlador backend
             const payload = response.data || response;
             const sales = payload.data || [];
             const meta = payload.meta || null;
             
-            // Inyección del DataTable
+            // Renderizamos la tabla
             const tableHtml = DataTable({
                 columns: salesColumns,
-                data: sales,
-                emptyMessage: 'No hay transacciones registradas en el historial.'
+                data: sales, 
+                emptyMessage: 'No se encontraron transacciones para los filtros solicitados.'
             });
 
-            // Inyección de los controles de paginación
             const paginationHtml = generatePaginationHtml(meta);
-
             tableContainer.innerHTML = tableHtml + paginationHtml;
 
         } catch (error) {
@@ -156,11 +162,59 @@ export const SalesListHandler = async () => {
         }
     };
 
-    // Renderizado inicial
+    // Inicialización
     await loadAndRenderSales();
 
     // ============================================================================
-    // 4. DELEGACIÓN DE EVENTOS (Anulación y Paginación)
+    // 4. LISTENERS DE FILTROS (Llaman directo al renderizado)
+    // ============================================================================
+    if (searchInput) {
+        let debounceTimer;
+        searchInput.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            // Espera 500ms antes de disparar la búsqueda para no saturar la red
+            debounceTimer = setTimeout(() => {
+                currentPage = 1; 
+                loadAndRenderSales();
+            }, 500);
+        });
+    }
+
+    if (dateInput) {
+        dateInput.addEventListener('change', () => {
+            currentPage = 1; 
+            loadAndRenderSales();
+        });
+    }
+
+    if (clearBtn){
+        clearBtn.addEventListener("click", () => {
+            clearBtn.addEventListener('click', () => {
+                let hasFilters = false;
+
+                // Limpiamos los inputs visualmente
+                if (searchInput && searchInput.value !== '') {
+                    searchInput.value = '';
+                    hasFilters = true;
+                }
+                
+                if (dateInput && dateInput.value !== '') {
+                    dateInput.value = '';
+                    hasFilters = true;
+                }
+
+                // Solo recargamos si realmente había algo que limpiar
+                if (hasFilters) {
+                    currentPage = 1;
+                    loadAndRenderSales();
+                }
+            
+            });
+        })
+    }
+
+    // ============================================================================
+    // 5. DELEGACIÓN DE EVENTOS (Anulación y Paginación)
     // ============================================================================
     tableContainer.addEventListener('click', async (e) => {
         
@@ -190,7 +244,7 @@ export const SalesListHandler = async () => {
 
             try {
                 await saleRepo.delete(id);
-                await loadAndRenderSales(); // Recarga la tabla en la misma página
+                await loadAndRenderSales(); 
             } catch (error) {
                 console.error("Error al anular la venta:", error);
                 const errorMessage = error.response?.data?.message || "Fallo transaccional al procesar la anulación.";

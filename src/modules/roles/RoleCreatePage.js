@@ -34,7 +34,6 @@ export const RoleCreatePage = async () => {
                             placeholder: 'Ej. Administrador, Cajero, Supervisor...'
                         })}
                     </div>
-                    
                     <div class="col-span-1 md:col-span-2">
                         ${Textarea({
                             label: 'Descripción del Rol',

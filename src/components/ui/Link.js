@@ -13,7 +13,8 @@ export const Link = ({
     id = '',
     className = '',
     target = '_self',
-    icon = ''
+    icon = '',
+    active = false
 } = {}) => {
     
     // 1. Clases Base - Añadido ring-offset-bg-base para armonizar con el fondo oscuro
@@ -25,7 +26,10 @@ export const Link = ({
         primary: "bg-brand text-black border-transparent hover:opacity-90 focus:ring-brand",
         
         // Variante para navegación (nav) - Ajustada para fondo oscuro
-        nav: "text-text-secondary hover:text-white font-bold px-3 py-2 hover:bg-bg-hover rounded-lg border-transparent focus:ring-brand",
+        // Si "active" es true, se aplica un estado persistente (no depende de hover/focus)
+        nav: active
+            ? "bg-bg-hover text-white font-bold px-3 py-2 rounded-lg border-transparent focus:ring-brand"
+            : "text-text-secondary hover:text-white font-bold px-3 py-2 hover:bg-bg-hover rounded-lg border-transparent focus:ring-brand",
         
         // Variante ghost - Transparente sobre fondo oscuro
         ghost: "bg-transparent text-text-secondary border-transparent hover:text-white hover:bg-bg-hover focus:ring-text-secondary",
@@ -53,9 +57,10 @@ export const Link = ({
     const finalClasses = `${baseClasses} ${selectedVariant} ${selectedSize} ${className}`.trim();
     
     const idAttr = id ? `id="${id}"` : '';
+    const ariaCurrentAttr = active ? `aria-current="page"` : '';
 
     return `
-        <a href="${href}" target="${target}" class="${finalClasses}" ${idAttr}>
+        <a href="${href}" target="${target}" class="${finalClasses}" ${idAttr} ${ariaCurrentAttr}>
             ${icon ? `<span class="flex items-center">${icon}</span>` : ''}
             ${text ? `<span>${text}</span>` : ''}
         </a>
