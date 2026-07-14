@@ -11,6 +11,28 @@ import { NavbarController } from '@/components/layout/navbar/NavbarController.js
  * Implementa el mapeo de errores semántico y delega la validación de unicidad al backend.
  */
 
+/**
+ * @description Envía los datos del formulario de registro al servidor.
+ * En caso de error, el catch procesa el fallo en tres niveles de compatibilidad:
+ * 
+ * 1. **Escenario de Array (Formatos estándar de validación Zod):** Si el servidor retorna
+ *    una lista estructurada de errores `[{ field: 'campo', message: 'motivo' }]`, se itera sobre 
+ *    el array, se transforma en un mapa clave-valor `{ campo: 'motivo' }` y se llama a 
+ *    `displayFormErrors` para pintar los mensajes de error directamente debajo de cada input.
+ * 
+ * 2. **Escenario de Objeto:** Si el backend responde con un objeto directo de errores `{ campo: 'motivo' }`,
+ *    se delega la inyección visual a `displayFormErrors`.
+ * 
+ * 3. **Fallback Semántico (Mensaje plano):** Si solo retorna un texto o mensaje general, se realiza un mapeo 
+ *    según un diccionario semántico de palabras clave (ej: si el mensaje menciona 'existe' o 'registrado', 
+ *    se asume que es un error en el campo 'email') para pintar la advertencia inline en el campo correspondiente.
+ * 
+ * @param {FormData} formData - Datos extraídos del formulario.
+ * @param {Object} authRepo - Repositorio para la comunicación con la API.
+ * @param {HTMLButtonElement} submitBtn - Botón de envío para gestionar los estados visuales (carga/deshabilitado).
+ * @param {HTMLFormElement} form - Instancia del formulario para inyectar errores dinámicamente.
+ * @returns {Promise<void>}
+ */
 const submitToServer = async (formData, authRepo, submitBtn, form) => {
     const originalBtnText = submitBtn.innerHTML;
     submitBtn.innerHTML = '<span class="animate-pulse"><i class="ri-loader-4-line animate-spin"></i> Creando cuenta...</span>';
@@ -66,26 +88,44 @@ const submitToServer = async (formData, authRepo, submitBtn, form) => {
         submitBtn.innerHTML = originalBtnText;
         submitBtn.disabled = false;
 
-        // Extracción y normalización del error
+        // Extracción del error estructurado del backend
         const serverMessage = error.response?.data?.message || error.message || "Fallo en el registro.";
-        const normalizedMessage = serverMessage.toLowerCase();
-        const serverErrors = error.response?.data?.errors;
+        const serverErrors  = error.response?.data?.errors;
 
-        // ESCENARIO IDEAL: DTO Estructurado Estricto
+        // -----------------------------------------------------------------------
+        // ESCENARIO 1: Backend envía el DTO estructurado como ARRAY
+        // Ej: [{ field: "email", message: "Este correo ya se encuentra registrado." }]
+        // -----------------------------------------------------------------------
+        if (Array.isArray(serverErrors) && serverErrors.length > 0) {
+            const errorsAsObject = {};
+            serverErrors.forEach(({ field, message }) => {
+                if (field && message) errorsAsObject[field] = message;
+            });
+            displayFormErrors(form, errorsAsObject);
+            return;
+        }
+
+        // -----------------------------------------------------------------------
+        // ESCENARIO 2: Backend envía el DTO estructurado como OBJETO
+        // Ej: { email: "Este correo ya se encuentra registrado." }
+        // -----------------------------------------------------------------------
         if (serverErrors && typeof serverErrors === 'object' && !Array.isArray(serverErrors) && Object.keys(serverErrors).length > 0) {
             displayFormErrors(form, serverErrors);
             return;
         }
 
-        // ESCENARIO DE CONTINGENCIA: Mapeo Semántico Dinámico
+        // -----------------------------------------------------------------------
+        // ESCENARIO 3: Fallback semántico — el backend solo envía un mensaje de texto
+        // Se intenta asociar el mensaje al campo más probable del formulario
+        // -----------------------------------------------------------------------
+        const normalizedMessage = serverMessage.toLowerCase();
         const semanticDictionary = {
-            email: ['correo', 'email', 'usuario', 'registrado', 'existe', 'duplicado'],
+            email:    ['correo', 'email', 'usuario', 'registrado', 'existe', 'duplicado'],
             password: ['contraseña', 'password', 'clave', 'seguridad', 'corta'],
             fullName: ['nombre', 'name']
         };
 
         const dynamicErrors = {};
-
         Object.entries(semanticDictionary).forEach(([fieldName, keywords]) => {
             if (keywords.some(keyword => normalizedMessage.includes(keyword))) {
                 dynamicErrors[fieldName] = serverMessage;
@@ -115,10 +155,16 @@ export const RegisterHandler = async () => {
         const formData = new FormData(form);
 
         const rules = {
-            fullName: { required: true, minLength: 3, message: 'El nombre completo es requerido.' },
-            email: { required: true, isEmail: true, message: 'Ingrese un correo electrónico válido.' },
-            password: { required: true, minLength: 6, message: 'La contraseña debe tener al menos 6 caracteres.' },
-            passwordConfirm: { required: true, minLength: 6, message: 'Confirme su contraseña por seguridad.' }
+            fullName: { required: true, minLength: 3, message: 'El nombre completo debe tener al menos 3 caracteres.' },
+            email: { required: true, isEmail: true, message: 'Ingrese un correo electrónico válido (ej: usuario@dominio.com).' },
+            password: {
+                required: true,
+                minLength: 8,
+                isStrongPassword: true,
+                minLengthMessage: 'La contraseña debe tener al menos 8 caracteres.',
+                strongMessage: 'La contraseña debe contener al menos una mayúscula (A-Z), una minúscula (a-z) y un número (0-9).'
+            },
+            passwordConfirm: { required: true, minLength: 8, message: 'Confirme su contraseña.' }
         };
 
         // Ejecutamos el validador de utils

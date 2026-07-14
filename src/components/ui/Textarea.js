@@ -14,21 +14,23 @@
  */
 export const Textarea = ({
     id = '',
+    label = '',
     name = '',
     value = '',
     placeholder = '',
     rows = 3,
     variant = 'primary',
     size = 'md',
+    required = false,
     disabled = false,
     dataset = {}
 } = {}) => {
     // Bloque 1: baseClasses
-    const baseClasses = "w-full appearance-none transition-all duration-200 outline-none resize-y disabled:bg-bg-hover disabled:text-text-secondary disabled:border-gray-700 disabled:cursor-not-allowed";
+    const baseClasses = "w-full rounded-md border font-medium transition-colors duration-200 outline-none resize-y disabled:bg-bg-hover disabled:text-text-secondary disabled:border-gray-700 disabled:cursor-not-allowed";
 
     // Bloque 2: variants
     const variants = {
-        primary: "border border-gray-700 bg-transparent text-text-primary placeholder-text-secondary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/30",
+        primary: "border-brand bg-brand-primary/5 text-brand-primary placeholder:text-white/50 focus:border-brand focus:ring-2 focus:ring-brand/30",
         secondary: "border border-gray-700 bg-transparent text-text-primary placeholder-text-secondary focus:border-brand-secondary focus:ring-2 focus:ring-brand-secondary/30",
         danger: "border border-red-500 bg-transparent text-text-primary focus:border-red-500 focus:ring-2 focus:ring-red-500/30 placeholder-red-300",
         success: "border border-green-500 bg-transparent text-text-primary focus:border-green-500 focus:ring-2 focus:ring-green-500/30",
@@ -60,16 +62,25 @@ export const Textarea = ({
     const nameAttr = name ? `name="${name}"` : '';
     const placeholderAttr = placeholder ? `placeholder="${placeholder}"` : '';
     const rowsAttr = `rows="${rows}"`;
+    const requiredAttr = required ? 'required' : '';
     const disabledAttr = disabled ? 'disabled' : '';
+
+    const labelHTML = label
+        ? `<label ${id ? `for="${id}"` : ''} class="block text-sm font-medium text-text-primary mb-1">
+                ${label}${required ? ' <span class="text-red-500">*</span>' : ''}
+            </label>`
+        : '';
 
     // Bloque 6: Retorno de HTML condicional
     return `
+        ${labelHTML}
         <textarea 
             ${idAttr}
             ${nameAttr} 
             class="${finalClasses}" 
             ${rowsAttr} 
             ${placeholderAttr} 
+            ${requiredAttr}
             ${disabledAttr} 
             ${datasetString}
         >${value}</textarea>
