@@ -50,18 +50,19 @@ const productColumns = [
         header: 'Estado',
         accessor: 'isActive',
         render: (product) => {
-            const isCurrentlyActive = Number(product.isActive) !== 0; 
-            return Badge({
-                text: isCurrentlyActive ? 'Activo' : 'Inactivo',
-                variant: isCurrentlyActive ? 'success' : 'danger'
-            });
-        }
+        const isCurrentlyActive = Number(product.is_active) === 1;
+
+        return Badge({
+            text: isCurrentlyActive ? 'Activo' : 'Inactivo',
+            variant: isCurrentlyActive ? 'success' : 'danger'
+        });
+    }
     },
     {
         header: 'Acciones',
         accessor: 'actions',
         render: (product) => {
-            const isCurrentlyActive = Number(product.isActive) !== 0;
+            const isCurrentlyActive = Number(product.is_active) === 1;
             
             return `
                 <div class="flex items-center justify-end gap-2">
@@ -138,31 +139,36 @@ const loadAndRenderProducts = async (productRepo, tableContainer, page = 1, limi
 };
 
 // ============================================================================
-// 3. LÓGICA DE ESTADO (Toggle Activo/Inactivo)
+// 3. LÓGICA DE ESTADO (Toggle Activo/Inactivo)  Cambios para reflejar el estado en la base de datos y actualizar la vista
 // ============================================================================
-const handleToggleStatus = async (btnElement, currentProducts, productRepo, refreshCallback) => {
+const handleToggleStatus = async (btnElement, currentProducts, productRepo, refreshCallback) => { 
     const id = btnElement.dataset.id;
     const productToToggle = currentProducts.find(p => String(p.id) === String(id));
     if (!productToToggle) return;
 
-    const isCurrentlyActive = Number(productToToggle.isActive) !== 0;
-    const newStatus = !isCurrentlyActive;
+    const isCurrentlyActive = Number(productToToggle.is_active) === 1;
     
     if (!confirm(`¿Está seguro de que desea ${isCurrentlyActive ? 'desactivar' : 'activar'} el producto "${productToToggle.name}"?`)) return;
-
-    const originalContent = btnElement.innerHTML;
+        
     btnElement.disabled = true;
     btnElement.innerHTML = '<span class="animate-pulse">...</span>';
 
     try {
-        await productRepo.updateStatus(id, { isActive: newStatus });
-        alert(`Producto ${newStatus ? 'activado' : 'desactivado'} exitosamente.`);
-        await refreshCallback();
+        const updatedProductPayload = {
+            code: productToToggle.code,
+            name: productToToggle.name,
+            price: parseFloat(productToToggle.price),
+            stock: parseInt(productToToggle.stock, 10),
+            category_id: parseInt(productToToggle.category_id || productToToggle.categoryId, 10),
+            isActive: !isCurrentlyActive
+        };
+
+        await productRepo.update(id, updatedProductPayload);
+        await refreshCallback(); 
     } catch (error) {
         console.error(error);
-        alert(error.response?.data?.message || error.message || "Error al actualizar el estado.");
-        btnElement.disabled = false;
-        btnElement.innerHTML = originalContent;
+        alert(error.message || "Error al actualizar el estado.");
+        await refreshCallback();
     }
 };
 
@@ -240,3 +246,4 @@ export const ProductListHandler = async () => {
         }
     });
 };
+
