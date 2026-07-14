@@ -41,7 +41,7 @@ export const ChartCard = ({
     const selectedVariant = variants[variant] || variants.default;
     const finalIconClasses = `${baseIconClasses} ${selectedVariant}`.trim();
 
-    // 4. Retorno delegando el contenedor base al componente Card genérico
+    // 4. Retorno delegando el contenedor base al componente Card genérico.
     return Card({
         bodyClass: 'p-8 flex flex-col',
         className: className,

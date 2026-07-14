@@ -1,3 +1,4 @@
+import { Link } from '@/components/ui';
 /**
  * @file HomeView.js
  * @version 1.1.0
@@ -11,9 +12,9 @@ export const HomeView = async () => {
             <div class="mx-auto w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-6 shadow-inner">
                 <svg class="w-10 h-10 text-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4">
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4">
                     </path>
                 </svg>
             </div>
@@ -29,19 +30,21 @@ export const HomeView = async () => {
 
             <div class="flex flex-col sm:flex-row justify-center gap-4">
 
-                <a
-                    href="#/login"
-                    class="inline-flex items-center justify-center px-8 py-3 min-w-[190px] rounded-xl bg-primary text-black font-bold hover:bg-primary-dark transition-all duration-300 hover:scale-105 active:scale-95"
-                >
-                    Ingresar al Sistema
-                </a>
+                ${Link({
+                    text: 'Ingresar al Sistema',
+                    href: '#/login',
+                    variant: 'primary',
+                    size: 'lg',
+                    className: 'min-w-[190px] rounded-xl hover:scale-105 active:scale-95'
+                })}
 
-                <a
-                    href="#/registro"
-                    class="px-8 py-3 rounded-xl border-2 border-brand text-white hover:bg-primary hover:text-black transition-all duration-300 hover:scale-105"
-                >
-                    Crear Nueva Cuenta
-                </a>
+                ${Link({
+                    text: 'Crear Nueva Cuenta',
+                    href: '#/registro',
+                    variant: 'outline-primary',
+                    size: 'lg',
+                    className: 'min-w-[190px] rounded-xl hover:bg-brand hover:text-black hover:scale-105 active:scale-95'
+                })}
 
             </div>
 
