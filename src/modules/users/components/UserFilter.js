@@ -1,3 +1,6 @@
+// Importamos la función de debounce para retrasar la búsqueda mientras el usuario escribe
+import { debounce } from '@/utils';
+
 /**
  * @file UserFilter.js
  * @description Componente funcional para el filtro de usuarios. Contiene la interfaz de usuario y los escuchadores de eventos para los filtros.
@@ -9,22 +12,46 @@
  * @returns {string} El HTML del componente.
  */
 export const UserFilter = (onFilterChange) => {
-    // Limpiamos escuchadores antiguos para prevenir fugas de memoria o múltiples callbacks acumulados
+    // Removemos escuchadores antiguos si ya existen en el objeto global para evitar fugas de memoria
     if (window.handleUserFilterInputEvent) {
         document.removeEventListener('input', window.handleUserFilterInputEvent);
         document.removeEventListener('change', window.handleUserFilterInputEvent);
     }
 
+    // Creamos la versión con retardo (debounced) de la función de filtro, configurada a 500 milisegundos
+    const debouncedFilterChange = debounce((searchVal, roleVal) => {
+        // Ejecutamos el callback original cuando finalice el tiempo de espera
+        onFilterChange(searchVal, roleVal);
+    }, 500);
+
+    // Definimos el manejador principal de eventos para interceptar los cambios en los filtros
     window.handleUserFilterInputEvent = (e) => {
-        if (e.target && (e.target.id === 'filter-search' || e.target.id === 'filter-role')) {
-            const searchVal = document.getElementById('filter-search')?.value || '';
-            const roleVal = document.getElementById('filter-role')?.value || '';
-            onFilterChange(searchVal, roleVal);
+        // Validamos que el evento provenga de los elementos de filtro correspondientes
+        if (e.target) {
+            // Si el usuario está escribiendo en el campo de búsqueda por texto
+            if (e.target.id === 'filter-search') {
+                // Obtenemos el texto ingresado en el buscador
+                const searchVal = e.target.value;
+                // Obtenemos el rol seleccionado actualmente en la interfaz
+                const roleVal = document.getElementById('filter-role')?.value || '';
+                // Ejecutamos la búsqueda con retraso para no sobrecargar el servidor
+                debouncedFilterChange(searchVal, roleVal);
+            } 
+            // Si el usuario cambia el rol seleccionado en la lista desplegable
+            else if (e.target.id === 'filter-role') {
+                // Obtenemos el texto actual del buscador
+                const searchVal = document.getElementById('filter-search')?.value || '';
+                // Obtenemos el nuevo rol seleccionado
+                const roleVal = e.target.value;
+                // Ejecutamos el filtro inmediatamente sin esperar, ya que es una selección explícita
+                onFilterChange(searchVal, roleVal);
+            }
         }
     };
 
-    // Usamos delegación de eventos en el documento para el input y el cambio
+    // Agregamos el manejador al evento 'input' para capturar la escritura en tiempo real
     document.addEventListener('input', window.handleUserFilterInputEvent);
+    // Agregamos el manejador al evento 'change' para capturar la selección del menú desplegable
     document.addEventListener('change', window.handleUserFilterInputEvent);
 
     return `
