@@ -13,6 +13,7 @@
  * @returns {string} Cadena de texto con el HTML válido del componente.
  */
 export const Textarea = ({
+    id = '',
     name = '',
     value = '',
     placeholder = '',
@@ -55,6 +56,7 @@ export const Textarea = ({
         .map(([key, val]) => `data-${key}="${val}"`)
         .join(' ');
         
+    const idAttr = id ? `id="${id}"` : '';
     const nameAttr = name ? `name="${name}"` : '';
     const placeholderAttr = placeholder ? `placeholder="${placeholder}"` : '';
     const rowsAttr = `rows="${rows}"`;
@@ -63,6 +65,7 @@ export const Textarea = ({
     // Bloque 6: Retorno de HTML condicional
     return `
         <textarea 
+            ${idAttr}
             ${nameAttr} 
             class="${finalClasses}" 
             ${rowsAttr} 
