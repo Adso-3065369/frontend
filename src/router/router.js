@@ -172,8 +172,9 @@ const bootControllers = (route, params) => {
  */
 const handleNavigation = async () => {
     try {
-        // 1. Lectura: Obtenemos el hash actual de la URL, si está vacío asumimos la raíz '#/'
-        const currentPath = window.location.hash || '#/';
+        // 1. Lectura: Obtenemos el hash actual de la URL sin parámetros de consulta (?), si está vacío asumimos la raíz '#/'
+        const hash = window.location.hash || '#/';
+        const currentPath = hash.split('?')[0];
         
         // 2. Búsqueda: Delegamos la búsqueda de la configuración a nuestra función especializada
         const { route, params } = findRouteAndParams(currentPath);

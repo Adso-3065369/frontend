@@ -50,7 +50,7 @@ const productColumns = [
         header: 'Estado',
         accessor: 'isActive',
         render: (product) => {
-            const isCurrentlyActive = product.isActive !== false; 
+            const isCurrentlyActive = Number(product.isActive) !== 0;
             return Badge({
                 text: isCurrentlyActive ? 'Activo' : 'Inactivo',
                 variant: isCurrentlyActive ? 'success' : 'danger'
@@ -61,37 +61,37 @@ const productColumns = [
         header: 'Acciones',
         accessor: 'actions',
         render: (product) => {
-            const isCurrentlyActive = product.isActive !== false;
-            
+            const isCurrentlyActive = Number(product.isActive) !== 0;
+
             return `
                 <div class="flex items-center justify-end gap-2">
                     ${RenderIf('products.update',
-                        Button({
-                            variant: isCurrentlyActive ? 'warning' : 'success',
-                            icon: isCurrentlyActive ? '<i class="ri-eye-off-line"></i>' : '<i class="ri-eye-line"></i>',
-                            className: 'w-8 h-8 p-0 flex items-center justify-center',
-                            title: isCurrentlyActive ? 'Desactivar Producto' : 'Activar Producto',
-                            dataset: { action: 'toggle', id: product.id }
-                        })
-                    )}
+                Button({
+                    variant: isCurrentlyActive ? 'warning' : 'success',
+                    icon: isCurrentlyActive ? '<i class="ri-eye-off-line"></i>' : '<i class="ri-eye-line"></i>',
+                    className: 'w-8 h-8 p-0 flex items-center justify-center',
+                    title: isCurrentlyActive ? 'Desactivar Producto' : 'Activar Producto',
+                    dataset: { action: 'toggle', id: product.id }
+                })
+            )}
                     ${RenderIf('products.update',
-                        Link({
-                            href: `#/productos/editar/${product.id}`,
-                            variant: 'outline-primary',
-                            size: 'sm',
-                            icon: '<i class="ri-pencil-line"></i>',
-                            className: 'justify-center w-8 h-8 p-0'
-                        })
-                    )}
+                Link({
+                    href: `#/productos/editar/${product.id}`,
+                    variant: 'outline-primary',
+                    size: 'sm',
+                    icon: '<i class="ri-pencil-line"></i>',
+                    className: 'justify-center w-8 h-8 p-0'
+                })
+            )}
                     ${RenderIf('products.delete',
-                        Button({
-                            variant: 'danger',
-                            icon: '<i class="ri-delete-bin-line"></i>',
-                            className: 'w-8 h-8 p-0 flex items-center justify-center',
-                            title: 'Eliminar Permanente',
-                            dataset: { action: 'delete', id: product.id }
-                        })
-                    )}
+                Button({
+                    variant: 'danger',
+                    icon: '<i class="ri-delete-bin-line"></i>',
+                    className: 'w-8 h-8 p-0 flex items-center justify-center',
+                    title: 'Eliminar Permanente',
+                    dataset: { action: 'delete', id: product.id }
+                })
+            )}
                 </div>
             `;
         }
@@ -103,20 +103,20 @@ const productColumns = [
 // ============================================================================
 const loadAndRenderProducts = async (productRepo, tableContainer, page = 1, limit = 10, search = '') => {
     try {
-        const searchParam = search ? `&search=${encodeURIComponent(search)}` : '';
+        const searchParam = search ? `&name=${encodeURIComponent(search)}` : '';
         const queryString = `?page=${page}&limit=${limit}${searchParam}`;
 
         const response = await productRepo.getAll(queryString);
-        
+
         const payload = response.data || response;
         const products = payload.data || [];
         const meta = payload.meta || null;
-        
+
         const tableHtml = DataTable({
             columns: productColumns,
             data: products,
-            emptyMessage: search 
-                ? 'No se encontraron productos que coincidan con la búsqueda.' 
+            emptyMessage: search
+                ? 'No se encontraron productos que coincidan con la búsqueda.'
                 : 'No hay productos registrados en el inventario.'
         });
 
@@ -124,7 +124,7 @@ const loadAndRenderProducts = async (productRepo, tableContainer, page = 1, limi
         const paginationHtml = meta ? Pagination({ meta }) : '';
 
         tableContainer.innerHTML = tableHtml + paginationHtml;
-        
+
         return products;
     } catch (error) {
         console.error("Error al obtener productos:", error);
@@ -145,29 +145,24 @@ const handleToggleStatus = async (btnElement, currentProducts, productRepo, refr
     const productToToggle = currentProducts.find(p => String(p.id) === String(id));
     if (!productToToggle) return;
 
-    const isCurrentlyActive = productToToggle.isActive !== false;
-    
+    const isCurrentlyActive = Number(productToToggle.isActive) !== 0;
+    const newStatus = !isCurrentlyActive;
+
     if (!confirm(`¿Está seguro de que desea ${isCurrentlyActive ? 'desactivar' : 'activar'} el producto "${productToToggle.name}"?`)) return;
-        
+
+    const originalContent = btnElement.innerHTML;
     btnElement.disabled = true;
     btnElement.innerHTML = '<span class="animate-pulse">...</span>';
 
     try {
-        const updatedProductPayload = {
-            code: productToToggle.code,
-            name: productToToggle.name,
-            price: parseFloat(productToToggle.price),
-            stock: parseInt(productToToggle.stock, 10),
-            category_id: parseInt(productToToggle.category_id || productToToggle.categoryId, 10),
-            isActive: !isCurrentlyActive
-        };
-
-        await productRepo.update(id, updatedProductPayload);
-        await refreshCallback(); 
+        await productRepo.updateStatus(id, { isActive: newStatus });
+        alert(`Producto ${newStatus ? 'activado' : 'desactivado'} exitosamente.`);
+        await refreshCallback();
     } catch (error) {
         console.error(error);
-        alert(error.message || "Error al actualizar el estado.");
-        await refreshCallback();
+        alert(error.response?.data?.message || error.message || "Error al actualizar el estado.");
+        btnElement.disabled = false;
+        btnElement.innerHTML = originalContent;
     }
 };
 
@@ -176,20 +171,20 @@ const handleToggleStatus = async (btnElement, currentProducts, productRepo, refr
 // ============================================================================
 const handleHardDelete = async (btnElement, productRepo, refreshCallback) => {
     const id = btnElement.dataset.id;
-    
+
     if (!confirm('ADVERTENCIA: ¿Está seguro de eliminar este producto del inventario de forma permanente? Esta acción no se puede deshacer.')) return;
-        
+
     const originalContent = btnElement.innerHTML;
     btnElement.innerHTML = '<i class="ri-loader-4-line animate-spin"></i>';
     btnElement.disabled = true;
 
     try {
         await productRepo.delete(id);
-        await refreshCallback(); 
+        await refreshCallback();
     } catch (error) {
         console.error("Error durante la eliminación:", error);
         alert(error.message || "Error al intentar eliminar el producto.");
-        
+
         btnElement.innerHTML = originalContent;
         btnElement.disabled = false;
     }
@@ -207,20 +202,20 @@ export const ProductListHandler = async () => {
     let currentProducts = [];
     let currentPage = 1;
     const itemsPerPage = 10;
-    let currentSearchTerm = ''; 
+    let currentSearchTerm = '';
 
     const refreshView = async () => {
         currentProducts = await loadAndRenderProducts(
-            productRepo, 
-            tableContainer, 
-            currentPage, 
-            itemsPerPage, 
+            productRepo,
+            tableContainer,
+            currentPage,
+            itemsPerPage,
             currentSearchTerm
         );
     };
 
     await refreshView();
-    
+
     tableContainer.addEventListener('click', async (e) => {
         const btnPaginate = e.target.closest('button[data-action="paginate"]');
         if (btnPaginate && !btnPaginate.disabled) {
@@ -231,17 +226,32 @@ export const ProductListHandler = async () => {
             }
             return;
         }
-        
+
         const btnToggleStatus = e.target.closest('button[data-action="toggle"]');
         if (btnToggleStatus) {
             await handleToggleStatus(btnToggleStatus, currentProducts, productRepo, refreshView);
             return;
         }
-        
+
         const btnDelete = e.target.closest('button[data-action="delete"]');
         if (btnDelete) {
             await handleHardDelete(btnDelete, productRepo, refreshView);
             return;
         }
     });
+
+    //filtro busqueda por nombre
+    //Lógica de Búsqueda (Input Event)
+    const searchInput = document.getElementById('search-product-input');
+    if (searchInput) {
+        let debounceTimer;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(async () => {
+                currentSearchTerm = e.target.value.trim();
+                currentPage = 1; // Reseteamos a la página 1 en cada nueva búsqueda
+                await refreshView();
+            }, 500); // 500ms de debounce para no saturar el backend
+        });
+    }
 };

@@ -1,6 +1,6 @@
 /**
  * @file HomeView.js
- * @version 1.0.0
+ * @version 1.1.0
  * @description Pantalla de bienvenida para la gestión del sistema.
  */
 
@@ -44,6 +44,7 @@ export const HomeView = async () => {
                     
                 </div>
             </div>
+
         </div>
     `;
 };
