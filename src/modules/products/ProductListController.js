@@ -233,7 +233,7 @@ export const ProductListHandler = async () => {
 
   
   await refreshView();
-};
+
   /**
   * Evento que detecta el cambio en el selector de ordenamiento.
   *
@@ -243,6 +243,7 @@ export const ProductListHandler = async () => {
   * nuevo criterio de ordenamiento.
   */
   
+ sortSelect?.addEventListener('change', async(e) => {
  
  const [sortBy, sortOrder] = e.target.value.split('-');
  
@@ -252,7 +253,6 @@ export const ProductListHandler = async () => {
  currentPage = 1;
  
  await refreshView();
- sortSelect?.addEventListener('change', async(e) => {
     tableContainer.addEventListener('click', async (e) => {
         const btnPaginate = e.target.closest('button[data-action="paginate"]');
         if (btnPaginate && !btnPaginate.disabled) {
@@ -291,4 +291,7 @@ export const ProductListHandler = async () => {
             }, 500); // 500ms de debounce para no saturar el backend
         });
     }
+ 
 });
+
+};
