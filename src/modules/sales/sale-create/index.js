@@ -18,6 +18,14 @@ export const SaleCreateHandler = () => {
 
     checkSaveButtonStatus();
 
+    // Al iniciar la pantalla, mostramos el campo extra que corresponda al método de pago elegido.
+    if (UI.elements.metodoPago) {
+        UI.renderPaymentExtraFields(UI.elements.metodoPago.value);
+        UI.elements.metodoPago.addEventListener('change', () => {
+            UI.renderPaymentExtraFields(UI.elements.metodoPago.value);
+        });
+    }
+
     const saleRepo = createRepository('sales'); 
     const clientRepo = createRepository('clients');
     const productRepo = createRepository('products');
@@ -122,14 +130,44 @@ export const SaleCreateHandler = () => {
             return
         };
 
-        UI.renderConfirmSummary(saleState.client, saleState.cart, saleState.total);
+        // Antes de abrir el resumen, verificamos que el cliente haya completado
+        // los datos extra que pide el método de pago elegido.
+        // Obtenemos el método de pago seleccionado por el usuario. Si no hay ninguno, por defecto se elige 'efectivo'.
+        const paymentMethod = UI.elements.metodoPago?.value || 'efectivo';
+        //Traemos la información adicional que el usuario escribió (como datos de la tarjeta o el recibo).
+        const extraFields = UI.getPaymentExtraFields();
+        // Si eligió 'tarjeta', revisamos que no haya dejado el número de tarjeta en blanco.
+        if (paymentMethod === 'tarjeta' && !extraFields.card_number) {
+            alert('Ingrese el número de tarjeta antes de continuar.');
+            return;    // 3. Si eligió 'tarjeta', revisamos que no haya dejado el número de tarjeta en blanco.
+        }
+    //Si eligió 'transferencia', revisamos que haya escrito el número del recibo o comprobante.
+        if (paymentMethod === 'transferencia' && !extraFields.receipt_number) {
+            alert('Ingrese el número de comprobante antes de continuar.');
+            return;// Detiene el proceso para que ingrese el comprobante.
+        }
+    //Si eligió 'credito', revisamos que haya puesto la cantidad de días de plazo para pagar.
+        if (paymentMethod === 'credito' && !extraFields.term_days) {
+            alert('Ingrese el plazo en días antes de continuar.');
+            return;// Detiene el proceso para que elija los días.
+        }
+
+    //Si todos los datos anteriores están bien, preparamos la pantalla con el resumen final de la venta.
+    // Le pasamos el cliente, los productos agregados, el total de dinero y la forma en que va a pagar.
+        UI.renderConfirmSummary(saleState.client, saleState.cart, saleState.total, paymentMethod);
+    //Finalmente, abrimos la ventana flotante (el cuadro en pantalla) para confirmar la venta.
         UI.modals.open('sale-confirm-modal');
     });
 
     // 4.2. Solo al confirmar dentro del modal se ejecuta la transacción real.
     UI.elements.btnConfirmSale.addEventListener('click', async () => {
-        const payload = saleState.getPayload();
-
+        // Al confirmar, juntamos todo lo que necesitamos enviar al servidor.
+        // Esto incluye el método de pago y los datos extra de ese método.
+        const payload = {
+            ...saleState.getPayload(),
+            payment_method: UI.elements.metodoPago?.value || 'efectivo',
+            payment_data: UI.getPaymentExtraFields()
+        };
         const originalText = UI.elements.btnConfirmSale.innerHTML;
         UI.elements.btnConfirmSale.disabled = true;
         UI.elements.btnConfirmSale.innerHTML = '<i class="ri-loader-4-line animate-spin"></i> Procesando...';

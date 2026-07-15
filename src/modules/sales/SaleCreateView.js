@@ -49,6 +49,18 @@ export const SaleCreateView = async () => {
 
                     <div class="app-card p-6">
                         <h2 class="text-lg font-bold text-white mb-4">Resumen de Pago</h2>
+                        <div class="space-y-3 mb-4">
+                            <!-- Aquí el usuario elige cómo quiere pagar la factura -->
+                            <label for="metodoPago" class="block text-sm font-medium text-white">Método de pago:</label>
+                            <select id="metodoPago" class="w-full bg-bg-base border border-gray-700 text-white rounded-lg px-4 py-3 outline-none focus:border-brand transition-colors">
+                                <option value="efectivo">Efectivo</option>
+                                <option value="tarjeta">Tarjeta</option>
+                                <option value="transferencia">Transferencia</option>
+                                <option value="credito">Crédito</option>
+                            </select>
+                        </div>
+                        <!-- Campos extra que cambian según el método de pago seleccionado -->
+                        <div id="payment-extra-fields" class="space-y-3 mb-4"></div>
                         <div class="flex justify-between items-center text-2xl font-black text-brand bg-bg-base p-4 rounded-xl border border-gray-800">
                             <span>Total:</span>
                             <span id="sale-grand-total">$0</span>
