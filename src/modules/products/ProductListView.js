@@ -5,6 +5,14 @@ import { RenderIf } from '@/utils';
  * @file ProductListView.js
  * @description Interfaz para el listado del inventario adaptada al patrón de componentes dinámicos.
  */
+/**
+ * Selector de ordenamiento del listado de productos. Permite al usuario seleccionar el criterio de ordenamiento.
+    La lógica del evento se encuentra en ProductListController.js.
+   ProductListView.js
+    en pocas palabras, este componente es el que renderiza la vista del listado de productos y permite al usuario seleccionar el criterio de ordenamiento.
+ */
+
+
 export const ProductListView = async () => {
     return `
         <div class="p-6 space-y-6">
@@ -25,6 +33,28 @@ export const ProductListView = async () => {
                     )}
                 </div>
             </div>
+  
+
+            
+          <div class="flex items-center justify-end gap-3 mb-4">
+
+              <label
+                  for="sort-price"
+                  class="text-sm font-medium text-text-secondary"
+              >
+                  Ordenar por:
+              </label>
+
+              <select
+                  id="sort-price"
+                  class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white"
+              >
+                  <option value="name-ASC">Nombre (A-Z)</option>
+                  <option value="price-DESC">Precio Mayor a menor</option>
+                  <option value="price-ASC">Precio Menor a mayor</option>
+              </select>
+
+          </div>
 
             <!-- Contenedor de Búsqueda -->
             <div class="bg-app-card border border-brand/20 p-4 rounded-lg flex items-center gap-3">

@@ -101,10 +101,21 @@ const productColumns = [
 // ============================================================================
 // 2. FASE DE CARGA DE DATOS Y RENDERIZADO
 // ============================================================================
-const loadAndRenderProducts = async (productRepo, tableContainer, page = 1, limit = 10, search = '') => {
+
+/**
+ * Se agregaron los parámetros sortBy y sortOrder para permitir
+ * enviar al backend el campo y la dirección del ordenamiento.
+ *
+ * Valores por defecto:
+ * - sortBy = 'name': ordena inicialmente por nombre.
+ * - sortOrder = 'ASC': aplica un orden ascendente.
+ */
+
+const loadAndRenderProducts = async (productRepo, tableContainer, page = 1, limit = 10, search = '',  sortBy = 'name',
+    sortOrder = 'ASC') => {
     try {
         const searchParam = search ? `&name=${encodeURIComponent(search)}` : '';
-        const queryString = `?page=${page}&limit=${limit}${searchParam}`;
+        const queryString =`?page=${page}&limit=${limit}${searchParam}&sortBy=${sortBy}&sortOrder=${sortOrder}`;
 
         const response = await productRepo.getAll(queryString);
 
@@ -194,28 +205,54 @@ const handleHardDelete = async (btnElement, productRepo, refreshCallback) => {
 // 5. ORQUESTADOR PRINCIPAL
 // ============================================================================
 export const ProductListHandler = async () => {
-    const productRepo = createRepository('products');
-    const tableContainer = document.getElementById('products-table-container');
+  const productRepo = createRepository('products');
+  const tableContainer = document.getElementById('products-table-container');
+  const sortSelect = document.getElementById('sort-price');
 
-    if (!tableContainer) return;
+  if (!tableContainer) return;
 
-    let currentProducts = [];
-    let currentPage = 1;
-    const itemsPerPage = 10;
-    let currentSearchTerm = '';
+  let currentProducts = [];
+  let currentPage = 1;
+  const itemsPerPage = 10;
+  let currentSearchTerm = '';
+  let currentSortBy = 'name';
+  let currentSortOrder = 'ASC';
 
-    const refreshView = async () => {
-        currentProducts = await loadAndRenderProducts(
-            productRepo,
-            tableContainer,
-            currentPage,
-            itemsPerPage,
-            currentSearchTerm
-        );
-    };
 
-    await refreshView();
+  const refreshView = async () => {
+    currentProducts = await loadAndRenderProducts(
+      productRepo,
+      tableContainer,
+      currentPage,
+      itemsPerPage,
+      currentSearchTerm,
+      currentSortBy,
+      currentSortOrder
+    );
+  };
 
+  
+  await refreshView();
+
+  /**
+  * Evento que detecta el cambio en el selector de ordenamiento.
+  *
+  * Obtiene el campo y el tipo de orden seleccionados por el usuario,
+  * actualiza las variables de control, reinicia la paginación a la
+  * primera página y recarga el listado de productos aplicando el
+  * nuevo criterio de ordenamiento.
+  */
+  
+ sortSelect?.addEventListener('change', async(e) => {
+ 
+ const [sortBy, sortOrder] = e.target.value.split('-');
+ 
+ currentSortBy = sortBy;
+ currentSortOrder = sortOrder;
+ 
+ currentPage = 1;
+ 
+ await refreshView();
     tableContainer.addEventListener('click', async (e) => {
         const btnPaginate = e.target.closest('button[data-action="paginate"]');
         if (btnPaginate && !btnPaginate.disabled) {
@@ -254,4 +291,7 @@ export const ProductListHandler = async () => {
             }, 500); // 500ms de debounce para no saturar el backend
         });
     }
+ 
+});
+
 };
