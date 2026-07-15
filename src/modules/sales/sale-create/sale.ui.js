@@ -10,6 +10,10 @@ export const UI = {
             clientIdInput: document.getElementById('client_id'),
             cartContainer: document.getElementById('cart-table-container'), 
             grandTotal: document.getElementById('sale-grand-total'),
+            // Aquí guardamos el campo que dice cómo quiere pagar el cliente.
+            metodoPago: document.getElementById('metodoPago'),
+            // Aquí va el bloque que cambia cuando el cliente elige tarjeta/transferencia/crédito.
+            extraFields: document.getElementById('payment-extra-fields'),
             btnSave: document.getElementById('btn-save-sale'),
             searchClientInput: document.getElementById('search-client-input'),
             clientSearchResults: document.getElementById('client-search-results'),
@@ -19,6 +23,55 @@ export const UI = {
             btnConfirmSale: document.getElementById('btn-confirm-sale'),
         };
         return !!this.elements.cartContainer;
+    },
+
+    renderPaymentExtraFields(method) {
+        if (!this.elements.extraFields) return;
+
+        // Dependiendo de lo que elija el cliente, mostramos un campo distinto.
+        // Si paga con tarjeta, pedimos número de tarjeta.
+        // Si paga con transferencia, pedimos número de comprobante.
+        // Si paga con crédito, pedimos cuántos días tendrá para pagar.
+        let html = '';
+
+        if (method === 'tarjeta') {
+            html = `
+                <label for="numeroTarjeta" class="block text-sm font-medium text-white">Número de tarjeta:</label>
+                <input id="numeroTarjeta" name="numeroTarjeta" maxlength="16" type="text" class="w-full bg-bg-base border border-gray-700 text-white rounded-lg px-4 py-3 outline-none focus:border-brand transition-colors" placeholder="1234 5678 9012 3456">
+            `;
+        } else if (method === 'transferencia') {
+            html = `
+                <label for="comprobante" class="block text-sm font-medium text-white">Número de comprobante:</label>
+                <input id="comprobante" name="comprobante" type="text" class="w-full bg-bg-base border border-gray-700 text-white rounded-lg px-4 py-3 outline-none focus:border-brand transition-colors" placeholder="ABC123456789">
+            `;
+        } else if (method === 'credito') {
+            html = `
+                <label for="plazo" class="block text-sm font-medium text-white">Plazo (días):</label>
+                <input id="plazo" name="plazo" type="number" min="1" class="w-full bg-bg-base border border-gray-700 text-white rounded-lg px-4 py-3 outline-none focus:border-brand transition-colors" placeholder="30">
+            `;
+        }
+
+        this.elements.extraFields.innerHTML = html;
+    },
+
+    getPaymentExtraFields() {
+        // Leemos el dato extra según el método de pago que el cliente eligió.
+        // De esta forma guardamos solo lo que corresponde.
+        const method = this.elements.metodoPago?.value || 'efectivo';
+
+        if (method === 'tarjeta') {
+            return { card_number: this.elements.extraFields.querySelector('#numeroTarjeta')?.value.trim() || '' };
+        }
+
+        if (method === 'transferencia') {
+            return { receipt_number: this.elements.extraFields.querySelector('#comprobante')?.value.trim() || '' };
+        }
+
+        if (method === 'credito') {
+            return { term_days: parseInt(this.elements.extraFields.querySelector('#plazo')?.value, 10) || null };
+        }
+
+        return {};
     },
 
     modals: {
@@ -129,17 +182,29 @@ export const UI = {
     },
 
     // 🚀 Resumen mostrado en el modal de confirmación antes de registrar la venta
-    renderConfirmSummary(client, cart, total) {
+    renderConfirmSummary(client, cart, total, paymentMethod) {
         const clientLabel = client
             ? `${client.name} <span class="text-gray-500 font-mono text-xs">(Doc: ${client.document_number})</span>`
             : 'Consumidor Final';
 
+        const paymentMethodMap = {
+            efectivo: 'Efectivo',
+            tarjeta: 'Tarjeta',
+            transferencia: 'Transferencia',
+            credito: 'Crédito'
+        };
+
+        const paymentMethodLabel = paymentMethodMap[paymentMethod] || 'Efectivo';
         const itemsCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
         this.elements.confirmSummary.innerHTML = `
             <div class="flex justify-between items-center border-b border-gray-800 pb-3">
                 <span class="text-sm">Cliente</span>
                 <span class="text-white font-bold text-right">${clientLabel}</span>
+            </div>
+            <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+                <span class="text-sm">Método de pago</span>
+                <span class="text-white font-bold">${paymentMethodLabel}</span>
             </div>
             <div class="flex justify-between items-center border-b border-gray-800 pb-3">
                 <span class="text-sm">Productos en el carrito</span>
