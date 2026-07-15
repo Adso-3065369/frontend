@@ -1,6 +1,5 @@
 import { ConfigurationView, ConfigurationController } from '@/modules/config';
 
-import { PrivateLayout } from '@/layouts';
 
 export const configRoutes = [
     { 
@@ -8,7 +7,5 @@ export const configRoutes = [
         view: ConfigurationView, 
         init: ConfigurationController, 
         requiresAuth: true,
-        layout: PrivateLayout,
-        permissions: ['config.index']
     }
 ];

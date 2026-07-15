@@ -128,6 +128,12 @@ export const Navbar = () => {
                 ${RenderIf('sales.index',
                     Link({ text: 'Ventas', href: '#/ventas', variant: 'nav', active: isActive('#/ventas') })
                 )}
+                ${Link({
+                    href: '#/ayuda',
+                    variant: 'ghost',
+                    text: '<i class="ri-question-line text-lg mr-2"></i> Centro de Ayuda',
+                    className: 'flex items-center justify-start px-3 py-2.5 text-sm font-bold text-text-secondary hover:text-white hover:bg-bg-hover rounded-lg transition-colors'
+                })}
                 </div>
                 
                 <div id="auth-section" class="flex items-center gap-4">
@@ -177,7 +183,12 @@ export const Navbar = () => {
                         Link({ text: 'Categorías', href: '#/categorias', variant: 'nav', active: isActive('#/categorias') })
                     )}
                     ${RenderIf('sales.index',
-                        Link({ text: 'Ventas', href: '#/ventas', variant: 'nav', active: isActive('#/ventas') })
+                        Link({
+                            text: 'Ventas',
+                            href: '#/ventas',
+                            variant: 'nav',
+                            active: isActive('#/ventas')
+                        })
                     )}
                 </div>
             </div>
